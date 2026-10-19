@@ -1,0 +1,20 @@
+
+{
+  "name": "ClearMind - Habit Tracker",
+  "short_name": "ClearMind",
+  "description": "A private bong and joint tracking and quit timer app.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101813",
+  "theme_color": "#17251e",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
