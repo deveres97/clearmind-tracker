@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17251e">
+<meta name="description" content="Your private bong and joint habit tracker.">
+<title>ClearMind</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<style>
+:root{color-scheme:dark;--bg:#101813;--panel:#1a261e;--line:#304137;--green:#b8e0b8;--muted:#9caca0;--white:#f4f7f3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--white);font:15px system-ui,sans-serif}
+main{max-width:720px;margin:auto;padding:22px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+h1{font-size:27px;margin:0;letter-spacing:-1px}
+h2{font-size:17px;margin:0 0 14px}
+p{color:var(--muted);line-height:1.5}
+.small{font-size:12px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#202f25;border-radius:14px;padding:14px;min-width:0}
+.stat strong{display:block;font-size:23px;margin-top:6px;overflow-wrap:anywhere}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#111b15;color:var(--white);font:inherit}
+button{border:0;border-radius:11px;padding:12px 15px;background:var(--green);color:#142017;font:inherit;font-weight:700;cursor:pointer}
+button.secondary{background:#2a392f;color:var(--white);border:1px solid var(--line)}
+button.danger{background:#4a2828;color:#ffdada}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.tabs{display:flex;gap:8px;margin:18px 0}
+.tabs button{flex:1}
+.tabs button.active{background:var(--green);color:#142017}
+.entry{padding:13px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entrytop{display:flex;justify-content:space-between;gap:10px}
+.pill{font-size:11px;border:1px solid var(--line);padding:4px 8px;border-radius:20px;color:var(--green)}
+.empty{color:var(--muted);font-size:14px;padding:12px 0}
+footer{font-size:12px;color:var(--muted);line-height:1.6;margin-top:20px}
+hr{border:0;border-top:1px solid var(--line);margin:15px 0}
+@media(max-width:400px){.grid{gap:8px}.stat{padding:11px}.stat strong{font-size:20px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>ClearMind <span style="color:var(--green)">.</span></h1>
+    <div class="small">A little more awareness, every day.</div>
+  </div>
+  <span style="font-size:28px" aria-hidden="true">🌿</span>
+</header>
+
+<section class="grid">
+  <div class="stat"><span class="small">Bong sessions today</span><strong id="bToday">0</strong></div>
+  <div class="stat"><span class="small">Joints today</span><strong id="jToday">0</strong></div>
+  <div class="stat"><span class="small">Time since last bong</span><strong id="bTimer">—</strong></div>
+  <div class="stat"><span class="small">Time since last joint</span><strong id="jTimer">—</strong></div>
+</section>
+
+<section class="panel">
+<h2>Log a session</h2>
+<p style="margin-top:-5px">Record it honestly. No judgment, even if you're reducing gradually.</p>
+<div class="tabs">
+<button class="active" id="bTab" type="button" onclick="setType('bong')">● Bong</button>
+<button class="secondary" id="jTab" type="button" onclick="setType('joint')">〰 Joint</button>
+</div>
+<form id="logForm">
+<label for="when">Date and time</label>
+<input id="when" type="datetime-local" required>
+<label for="amount" id="amountLabel">Number of bong sessions</label>
+<input id="amount" type="number" min="0.1" max="100" step="0.1" value="1" required>
+<label for="unit">Amount unit</label>
+<select id="unit">
+<option value="sessions">Sessions</option>
+<option value="grams">Estimated grams</option>
+</select>
+<label for="tobacco">Tobacco mixed in? (optional)</label>
+<select id="tobacco">
+<option value="">Not recorded</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+</select>
+<label for="trigger">What prompted it? (optional)</label>
+<select id="trigger">
+<option value="">Not recorded</option>
+<option>Craving</option><option>Stress</option><option>Boredom</option>
+<option>Social situation</option><option>Habit / waking up</option>
+<option>Sleep</option><option>Other</option>
+</select>
+<label for="notes">Notes (optional)</label>
+<textarea id="notes" rows="2" maxlength="500" placeholder="Mood, situation, what helped…"></textarea>
+<div class="actions"><button type="submit">Save session</button></div>
+</form>
+</section>
+
+<section class="panel">
+<h2>My goals</h2>
+<label for="goal">Daily target (sessions + joints, combined)</label>
+<input id="goal" type="number" min="0" max="100" step="1" value="0">
+<p class="small">Set a reduction target, or leave at 0 if your goal is abstinence. This is a personal target, not a safe-use limit.</p>
+<div class="grid">
+<div class="stat"><span class="small">Today</span><strong id="todayTotal">0</strong><span class="small" id="goalStatus">Set a goal above</span></div>
+<div class="stat"><span class="small">Last 7 days</span><strong id="weekTotal">0</strong><span class="small">Recorded units</span></div>
+</div>
+</section>
+
+<section class="panel">
+<div class="entrytop" style="align-items:center">
+<h2 style="margin:0">Recent history</h2>
+<span class="pill" id="count">0 records</span>
+</div>
+<div id="history"><div class="empty">No sessions logged yet.</div></div>
+<div class="actions">
+<button class="secondary" type="button" onclick="exportData()">Export backup</button>
+<button class="secondary" type="button" onclick="document.getElementById('importFile').click()">Import backup</button>
+<input id="importFile" type="file" accept=".json,application/json" hidden>
+</div>
+<p class="small">Export regularly to keep a backup. Imported records are added to your history.</p>
+</section>
+
+<footer>
+Your records are stored in this browser on this device. They are not sent to a server by this app. Clearing browser data or losing the device can erase them, so export a backup regularly. If you share this device, other people with access to it may be able to see your records.
+</footer>
+</main>
+<script>
+const KEY='clearmind-tracker-v1';
+let records=[];
+let activeType='bong';
+
+function load(){
+  try{
+    const x=JSON.parse(localStorage.getItem(KEY)||'[]');
+    records=Array.isArray(x)?x.filter(validRecord):[];
+  }catch(e){records=[];}
+}
+function validRecord(r){
+  return r && typeof r.id==='string' &&
+    ['bong','joint'].includes(r.type) &&
+    Number.isFinite(Number(r.amount)) && Number(r.amount)>0 &&
+    Number.isFinite(Date.parse(r.when));
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(records));render();}
+function setType(t){
+  activeType=t;
+  document.getElementById('bTab').className=t==='bong'?'active':'secondary';
+  document.getElementById('jTab').className=t==='joint'?'active':'secondary';
+  document.getElementById('amountLabel').textContent=
+    t==='bong'?'Number of bong sessions':'Number of joints (partials allowed)';
+  document.getElementById('amount').value='1';
+  document.getElementById('unit').value='sessions';
+}
+function localDateInput(d=new Date()){
+  const pad=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+document.getElementById('when').value=localDateInput();
+
+document.getElementById('logForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const when=new Date(document.getElementById('when').value);
+  const amount=Number(document.getElementById('amount').value);
+  if(!Number.isFinite(when.getTime())||when.getTime()>Date.now()+60000){
+    alert('Enter a valid date and time that is not in the future.');return;
+  }
+  if(!Number.isFinite(amount)||amount<=0){alert('Enter an amount greater than zero.');return;}
+  records.push({
+    id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),
+    type:activeType,when:when.toISOString(),amount,
+    unit:document.getElementById('unit').value,
+    tobacco:document.getElementById('tobacco').value,
+    trigger:document.getElementById('trigger').value,
+    notes:document.getElementById('notes').value.trim()
+  });
+  save();
+  document.getElementById('notes').value='';
+  document.getElementById('trigger').value='';
+  document.getElementById('when').value=localDateInput();
+});
+
+document.getElementById('goal').addEventListener('input',render);
+
+function sameDay(a,b){
+  return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+}
+function fmtDate(s){
+  return new Date(s).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function duration(s){
+  if(!s)return 'No log yet';
+  const ms=Math.max(0,Date.now()-new Date(s).getTime());
+  const days=Math.floor(ms/86400000);
+  const hours=Math.floor(ms%86400000/3600000);
+  const mins=Math.floor(ms%3600000/60000);
+  if(days>0)return `${days}d ${hours}h`;
+  if(hours>0)return `${hours}h ${mins}m`;
+  return `${mins}m`;
+}
+function lastUse(type){
+  return records.filter(r=>r.type===type).sort((a,b)=>Date.parse(b.when)-Date.parse(a.when))[0]?.when||null;
+}
+function render(){
+  const now=new Date();
+  const sorted=[...records].sort((a,b)=>Date.parse(b.when)-Date.parse(a.when));
+  const today=records.filter(r=>sameDay(new Date(r.when),now));
+  const b=today.filter(r=>r.type==='bong').reduce((s,r)=>s+r.amount,0);
+  const j=today.filter(r=>r.type==='joint').reduce((s,r)=>s+r.amount,0);
+  document.getElementById('bToday').textContent=Number(b.toFixed(2));
+  document.getElementById('jToday').textContent=Number(j.toFixed(2));
+  document.getElementById('bTimer').textContent=duration(lastUse('bong'));
+  document.getElementById('jTimer').textContent=duration(lastUse('joint'));
+  document.getElementById('todayTotal').textContent=Number((b+j).toFixed(2));
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-6);weekStart.setHours(0,0,0,0);
+  const week=records.filter(r=>new Date(r.when)>=weekStart&&new Date(r.when)<=now)
+    .reduce((s,r)=>s+r.amount,0);
+  document.getElementById('weekTotal').textContent=Number(week.toFixed(2));
+  const goal=Number(document.getElementById('goal').value);
+  document.getElementById('goalStatus').textContent=goal>0?(b+j<=goal?'Within target':'Above target'):'No target set';
+  document.getElementById('count').textContent=`${records.length} record${records.length===1?'':'s'}`;
+  const hist=document.getElementById('history');
+  hist.replaceChildren();
+  if(!sorted.length){hist.innerHTML='<div class="empty">No sessions logged yet. Your first entry will appear here.</div>';return;}
+  sorted.slice(0,100).forEach(r=>{
+    const el=document.createElement('div');el.className='entry';
+    const top=document.createElement('div');top.className='entrytop';
+    const left=document.createElement('div');
+    const title=document.createElement('strong');
+    title.textContent=(r.type==='bong'?'Bong':'Joint')+' · '+r.amount+' '+(r.unit==='grams'?'g':r.unit);
+    const time=document.createElement('div');time.className='small';time.textContent=fmtDate(r.when);
+    left.append(title,time);top.append(left);
+    const del=document.createElement('button');del.className='secondary';del.type='button';del.textContent='Delete';
+    del.addEventListener('click',()=>{
+      if(confirm('Delete this record?')){records=records.filter(x=>x.id!==r.id);save();}
+    });
+    top.append(del);el.append(top);
+    const details=[r.tobacco==='yes'?'Tobacco mixed':r.tobacco==='no'?'No tobacco recorded':'',r.trigger,r.notes].filter(Boolean);
+    if(details.length){const p=document.createElement('p');p.style.margin='8px 0 0';p.textContent=details.join(' · ');el.append(p);}
+    hist.append(el);
+  });
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify({app:'ClearMind',version:1,records},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='clearmind-backup.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.getElementById('importFile').addEventListener('change',async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    const incoming=Array.isArray(data)?data:data.records;
+    if(!Array.isArray(incoming)||!incoming.every(validRecord))throw Error();
+    const ids=new Set(records.map(r=>r.id));
+    let added=0;
+    incoming.forEach(r=>{if(!ids.has(r.id)){records.push(r);ids.add(r.id);added++;}});
+    save();alert(`Imported ${added} new records.`);
+  }catch(err){alert('That backup file is not valid. No records were imported.');}
+  e.target.value='';
+});
+load();render();
+setInterval(render,30000);
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
