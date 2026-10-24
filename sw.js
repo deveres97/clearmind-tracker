@@ -1,8 +1,9 @@
-// ClearMind service worker v2
-// The app page is loaded network-first, so future updates on GitHub reach your phone automatically.
-// Everything still works offline from the cache.
-const CACHE = "clearmind-v2";
+// ClearMind service worker v3
+// App page: network-first, so updates you push to GitHub reach your phone.
+// Fonts (Google Fonts): cached on first load so the app looks right offline.
+const CACHE = "clearmind-v3";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
+const FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -23,10 +24,23 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   const req = event.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+
+  // Fonts: cache first
+  if (FONT_HOSTS.includes(url.hostname)) {
+    event.respondWith(
+      caches.match(req).then(cached => cached || fetch(req).then(res => {
+        if (res.ok || res.type === "opaque") { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+        return res;
+      }))
+    );
+    return;
+  }
+
+  if (url.origin !== self.location.origin) return;
 
   if (req.mode === "navigate") {
-    // Network first for the app page, fall back to cache when offline
     event.respondWith(
       fetch(req)
         .then(res => {
@@ -38,7 +52,6 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Cache first for icons/manifest, refreshed in the background
   event.respondWith(
     caches.match(req).then(cached => {
       const fresh = fetch(req).then(res => {
