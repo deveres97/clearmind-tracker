@@ -1,267 +1,659 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#17251e">
-<meta name="description" content="Your private bong and joint habit tracker.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1511">
+<meta name="description" content="ClearMind: a private tool to cut down cannabis and tobacco.">
 <title>ClearMind</title>
 <link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg">
 <style>
-:root{color-scheme:dark;--bg:#101813;--panel:#1a261e;--line:#304137;--green:#b8e0b8;--muted:#9caca0;--white:#f4f7f3}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--white);font:15px system-ui,sans-serif}
-main{max-width:720px;margin:auto;padding:22px 16px 48px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-h1{font-size:27px;margin:0;letter-spacing:-1px}
-h2{font-size:17px;margin:0 0 14px}
-p{color:var(--muted);line-height:1.5}
+:root{color-scheme:dark;--bg:#0e1511;--panel:#16211a;--panel2:#1e2c23;--line:#2b3b31;--green:#b8e0b8;--green2:#7fc48f;--amber:#f0c674;--red:#f08c8c;--muted:#93a597;--white:#f2f6f1}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--white);font:15px/1.45 system-ui,-apple-system,Roboto,sans-serif}
+main{max-width:640px;margin:auto;padding:18px 16px 110px}
+h1{font-size:23px;margin:0;letter-spacing:-.4px}
+h2{font-size:16px;margin:0 0 10px}
+h3{font-size:14px;margin:16px 0 6px;color:var(--green)}
+p{margin:6px 0;color:var(--muted)}
+a{color:var(--green)}
 .small{font-size:12px;color:var(--muted)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{background:#202f25;border-radius:14px;padding:14px;min-width:0}
-.stat strong{display:block;font-size:23px;margin-top:6px;overflow-wrap:anywhere}
-label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
-input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#111b15;color:var(--white);font:inherit}
-button{border:0;border-radius:11px;padding:12px 15px;background:var(--green);color:#142017;font:inherit;font-weight:700;cursor:pointer}
-button.secondary{background:#2a392f;color:var(--white);border:1px solid var(--line)}
-button.danger{background:#4a2828;color:#ffdada}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-.tabs{display:flex;gap:8px;margin:18px 0}
-.tabs button{flex:1}
-.tabs button.active{background:var(--green);color:#142017}
-.entry{padding:13px 0;border-bottom:1px solid var(--line)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel2);border-radius:14px;padding:12px;min-width:0}
+.stat b{display:block;font-size:20px;margin-top:2px;overflow-wrap:anywhere}
+button{font:inherit;border:0;border-radius:12px;padding:12px 14px;background:var(--green);color:#10200f;font-weight:700;cursor:pointer}
+button.ghost{background:var(--panel2);color:var(--white);border:1px solid var(--line)}
+button.amber{background:var(--amber);color:#2a1e05}
+button.danger{background:#4a2b2b;color:#ffd6d6}
+button.sm{padding:7px 11px;font-size:13px;border-radius:10px}
+button.link{background:none;color:var(--green);padding:4px 8px}
+button:active{transform:scale(.98)}
+button.wide{width:100%}
+.big{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 6px;border-radius:16px;font-size:13px}
+.big span{font-size:26px;line-height:1}
+.hero{text-align:center;padding:22px 16px}
+.heroT{font-size:44px;font-weight:800;letter-spacing:-1.5px;margin:4px 0;font-variant-numeric:tabular-nums}
+.bignum{margin:8px 0}.bignum b{font-size:34px}.bignum span{color:var(--muted)}
+.bar{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--green2);border-radius:6px;transition:width .4s}
+.bar.over i{background:var(--amber)}
+.pill{font-size:11px;border:1px solid var(--line);padding:4px 9px;border-radius:20px;color:var(--green);white-space:nowrap}
+.notice{background:#2a2410;border:1px solid #5a4a1c;color:#f6e3b4;border-radius:14px;padding:12px;margin:10px 0;font-size:14px}
+.notice.good{background:#16301f;border-color:#2f5c3c;color:#cfeccf}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--white);padding:8px 12px;border-radius:20px;font-weight:500;font-size:13px}
+.chip.on{background:var(--green);color:#10200f;border-color:var(--green);font-weight:700}
+label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#0f1913;color:var(--white);font:inherit}
+input[type=checkbox]{width:auto;margin-right:8px;transform:scale(1.2)}
+.check{display:flex;align-items:center;color:var(--white);font-size:14px}
+.stepper{display:flex;align-items:center;justify-content:space-between;background:var(--panel2);border-radius:14px;padding:6px}
+.stepper button{width:52px;font-size:22px;padding:8px}
+.stepper b{font-size:18px}
+.view{display:none}.view.on{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;background:#0b110df2;border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav .in{display:flex;max-width:640px;width:100%}
+nav button{flex:1;background:none;color:var(--muted);font-size:11px;font-weight:600;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button i{font-style:normal;font-size:20px}
+nav button.on{color:var(--green)}
+nav button.sos{color:var(--amber)}
+.sheetwrap{position:fixed;inset:0;background:#000b;display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sheetwrap[hidden]{display:none}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;width:100%;max-width:640px;max-height:90vh;overflow:auto;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
+#toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:#24352a;border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;transition:.25s;z-index:30;max-width:92vw;font-size:14px}
+#toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.chart{display:flex;align-items:flex-end;gap:4px;height:130px;margin-top:10px}
+.col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}
+.col .v{width:100%;border-radius:5px 5px 2px 2px;background:var(--green2);min-height:2px}
+.col .v.over{background:var(--amber)}
+.col .v.zero{background:var(--line)}
+.col .n{font-size:10px;color:var(--muted);margin-bottom:2px}
+.col .cap{position:absolute;left:-2px;right:-2px;border-top:2px dashed #f2f6f170}
+.lbls{display:flex;gap:4px;margin-top:4px}.lbls span{flex:1;text-align:center;font-size:10px;color:var(--muted)}
+.hb{display:grid;grid-template-columns:118px 1fr 36px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.hb .t{height:9px;background:var(--panel2);border-radius:5px;overflow:hidden}.hb .t i{display:block;height:100%;background:var(--green2)}
+.entry{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
 .entry:last-child{border-bottom:0}
-.entrytop{display:flex;justify-content:space-between;gap:10px}
-.pill{font-size:11px;border:1px solid var(--line);padding:4px 8px;border-radius:20px;color:var(--green)}
-.empty{color:var(--muted);font-size:14px;padding:12px 0}
-footer{font-size:12px;color:var(--muted);line-height:1.6;margin-top:20px}
-hr{border:0;border-top:1px solid var(--line);margin:15px 0}
-@media(max-width:400px){.grid{gap:8px}.stat{padding:11px}.stat strong{font-size:20px}}
+.dayhead{font-size:12px;color:var(--green);margin:14px 0 2px;font-weight:700}
+.breath{width:170px;height:170px;border-radius:50%;margin:14px auto;background:radial-gradient(circle,#7fc48f55,#7fc48f10);border:2px solid var(--green2);display:flex;align-items:center;justify-content:center;font-weight:700;text-align:center;transform:scale(.62)}
+ul.tidy{margin:6px 0;padding-left:18px;color:var(--muted)}ul.tidy li{margin:5px 0}
+.tel{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.tel:last-child{border-bottom:0}
+footer{font-size:12px;color:var(--muted);line-height:1.6;margin:18px 4px}
 </style>
 </head>
 <body>
 <main>
-<header>
-  <div>
-    <h1>ClearMind <span style="color:var(--green)">.</span></h1>
-    <div class="small">A little more awareness, every day.</div>
-  </div>
-  <span style="font-size:28px" aria-hidden="true">🌿</span>
-</header>
-
-<section class="grid">
-  <div class="stat"><span class="small">Bong sessions today</span><strong id="bToday">0</strong></div>
-  <div class="stat"><span class="small">Joints today</span><strong id="jToday">0</strong></div>
-  <div class="stat"><span class="small">Time since last bong</span><strong id="bTimer">—</strong></div>
-  <div class="stat"><span class="small">Time since last joint</span><strong id="jTimer">—</strong></div>
-</section>
-
-<section class="panel">
-<h2>Log a session</h2>
-<p style="margin-top:-5px">Record it honestly. No judgment, even if you're reducing gradually.</p>
-<div class="tabs">
-<button class="active" id="bTab" type="button" onclick="setType('bong')">● Bong</button>
-<button class="secondary" id="jTab" type="button" onclick="setType('joint')">〰 Joint</button>
-</div>
-<form id="logForm">
-<label for="when">Date and time</label>
-<input id="when" type="datetime-local" required>
-<label for="amount" id="amountLabel">Number of bong sessions</label>
-<input id="amount" type="number" min="0.1" max="100" step="0.1" value="1" required>
-<label for="unit">Amount unit</label>
-<select id="unit">
-<option value="sessions">Sessions</option>
-<option value="grams">Estimated grams</option>
-</select>
-<label for="tobacco">Tobacco mixed in? (optional)</label>
-<select id="tobacco">
-<option value="">Not recorded</option>
-<option value="yes">Yes</option>
-<option value="no">No</option>
-</select>
-<label for="trigger">What prompted it? (optional)</label>
-<select id="trigger">
-<option value="">Not recorded</option>
-<option>Craving</option><option>Stress</option><option>Boredom</option>
-<option>Social situation</option><option>Habit / waking up</option>
-<option>Sleep</option><option>Other</option>
-</select>
-<label for="notes">Notes (optional)</label>
-<textarea id="notes" rows="2" maxlength="500" placeholder="Mood, situation, what helped…"></textarea>
-<div class="actions"><button type="submit">Save session</button></div>
-</form>
-</section>
-
-<section class="panel">
-<h2>My goals</h2>
-<label for="goal">Daily target (sessions + joints, combined)</label>
-<input id="goal" type="number" min="0" max="100" step="1" value="0">
-<p class="small">Set a reduction target, or leave at 0 if your goal is abstinence. This is a personal target, not a safe-use limit.</p>
-<div class="grid">
-<div class="stat"><span class="small">Today</span><strong id="todayTotal">0</strong><span class="small" id="goalStatus">Set a goal above</span></div>
-<div class="stat"><span class="small">Last 7 days</span><strong id="weekTotal">0</strong><span class="small">Recorded units</span></div>
-</div>
-</section>
-
-<section class="panel">
-<div class="entrytop" style="align-items:center">
-<h2 style="margin:0">Recent history</h2>
-<span class="pill" id="count">0 records</span>
-</div>
-<div id="history"><div class="empty">No sessions logged yet.</div></div>
-<div class="actions">
-<button class="secondary" type="button" onclick="exportData()">Export backup</button>
-<button class="secondary" type="button" onclick="document.getElementById('importFile').click()">Import backup</button>
-<input id="importFile" type="file" accept=".json,application/json" hidden>
-</div>
-<p class="small">Export regularly to keep a backup. Imported records are added to your history.</p>
-</section>
-
-<footer>
-Your records are stored in this browser on this device. They are not sent to a server by this app. Clearing browser data or losing the device can erase them, so export a backup regularly. If you share this device, other people with access to it may be able to see your records.
-</footer>
+  <header class="row between" style="margin-bottom:6px">
+    <div><h1>ClearMind <span style="color:var(--green)">.</span></h1><div class="small" id="sub">One session at a time.</div></div>
+    <span style="font-size:26px" aria-hidden="true">🌿</span>
+  </header>
+  <section class="view on" id="v-today"></section>
+  <section class="view" id="v-sos"></section>
+  <section class="view" id="v-plan"></section>
+  <section class="view" id="v-insights"></section>
+  <section class="view" id="v-more"></section>
 </main>
+
+<nav><div class="in">
+  <button data-v="today" class="on"><i>◉</i>Today</button>
+  <button data-v="sos" class="sos"><i>🛟</i>Craving</button>
+  <button data-v="plan"><i>🎯</i>Plan</button>
+  <button data-v="insights"><i>📊</i>Insights</button>
+  <button data-v="more"><i>☰</i>More</button>
+</div></nav>
+
+<div class="sheetwrap" id="sheetWrap" hidden><div class="sheet" id="sheet"></div></div>
+<div id="toast" role="status"></div>
+<input id="importFile" type="file" accept=".json,application/json" hidden>
+
 <script>
-const KEY='clearmind-tracker-v1';
-let records=[];
-let activeType='bong';
+'use strict';
+const RKEY='clearmind-tracker-v1';      // same key as v1, so existing logs carry over
+const SKEY='clearmind-settings-v2';
+const DEF={mode:'reduce',baseline:0,step:1,stepEvery:7,floor:0,planStart:null,quitDate:'',gap:0,firstTime:'',
+  tobaccoDefault:'yes',noTobaccoGoal:false,costBong:0,costJoint:0,currency:'₹',dayStart:4,reasons:[]};
+const TRIGGERS=['Craving','Stress','Boredom','Friends / social','Just woke up','After food','Before sleep','With tea / coffee','Anxiety / low mood','Habit','Other'];
+const TIPS=['Name it: "this is a craving. It will pass."','Notice where you feel it in your body. Just watch it.','Sip a glass of cold water slowly.','Get up and change rooms — leave the place you usually smoke.','Breathe out longer than you breathe in.','Text someone. Anything at all.','Read your reasons below.','The urge feels permanent. It is not.'];
+let R=[],S={...DEF},view='today';
+let urgeEnd=0,urgeLen=0,urgeState='',breathOn=false,breathT0=0;
 
-function load(){
-  try{
-    const x=JSON.parse(localStorage.getItem(KEY)||'[]');
-    records=Array.isArray(x)?x.filter(validRecord):[];
-  }catch(e){records=[];}
-}
-function validRecord(r){
-  return r && typeof r.id==='string' &&
-    ['bong','joint'].includes(r.type) &&
-    Number.isFinite(Number(r.amount)) && Number(r.amount)>0 &&
-    Number.isFinite(Date.parse(r.when));
-}
-function save(){localStorage.setItem(KEY,JSON.stringify(records));render();}
-function setType(t){
-  activeType=t;
-  document.getElementById('bTab').className=t==='bong'?'active':'secondary';
-  document.getElementById('jTab').className=t==='joint'?'active':'secondary';
-  document.getElementById('amountLabel').textContent=
-    t==='bong'?'Number of bong sessions':'Number of joints (partials allowed)';
-  document.getElementById('amount').value='1';
-  document.getElementById('unit').value='sessions';
-}
-function localDateInput(d=new Date()){
-  const pad=n=>String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-document.getElementById('when').value=localDateInput();
-
-document.getElementById('logForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const when=new Date(document.getElementById('when').value);
-  const amount=Number(document.getElementById('amount').value);
-  if(!Number.isFinite(when.getTime())||when.getTime()>Date.now()+60000){
-    alert('Enter a valid date and time that is not in the future.');return;
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+function h(tag,props,...kids){
+  const e=document.createElement(tag);
+  if(props)for(const k in props){
+    const v=props[k];
+    if(v==null||v===false)continue;
+    if(k==='class')e.className=v;
+    else if(k==='style')e.style.cssText=v;
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);
+    else if(k in e)e[k]=v;
+    else e.setAttribute(k,v);
   }
-  if(!Number.isFinite(amount)||amount<=0){alert('Enter an amount greater than zero.');return;}
-  records.push({
-    id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),
-    type:activeType,when:when.toISOString(),amount,
-    unit:document.getElementById('unit').value,
-    tobacco:document.getElementById('tobacco').value,
-    trigger:document.getElementById('trigger').value,
-    notes:document.getElementById('notes').value.trim()
-  });
-  save();
-  document.getElementById('notes').value='';
-  document.getElementById('trigger').value='';
-  document.getElementById('when').value=localDateInput();
-});
+  kids.flat().forEach(c=>{if(c!=null&&c!==false)e.append(c)});
+  return e;
+}
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2);
+const isUse=r=>r.type==='bong'||r.type==='joint';
+const fmtN=n=>String(Number((+n).toFixed(1)));
+const money=n=>S.currency+Math.round(n).toLocaleString();
+const clock=d=>d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+function dur(ms){ms=Math.max(0,ms);const d=Math.floor(ms/864e5),hh=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);
+  if(d)return `${d}d ${hh}h`;if(hh)return `${hh}h ${m}m`;return `${m}m`}
+function localInput(d=new Date()){const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+// A "day" starts at S.dayStart (default 4am) so late-night sessions count toward the evening they belong to.
+function dIdx(d){const s=new Date(d.getTime()-S.dayStart*36e5);return Math.round(Date.UTC(s.getFullYear(),s.getMonth(),s.getDate())/864e5)}
+const idxLabel=(i,o)=>new Date(i*864e5).toLocaleDateString([], {timeZone:'UTC',...o});
+const costOf=r=>r.amount*(r.type==='bong'?+S.costBong||0:+S.costJoint||0);
 
-document.getElementById('goal').addEventListener('input',render);
+/* ---------- storage ---------- */
+function valid(r){return r&&typeof r.id==='string'&&['bong','joint','resist'].includes(r.type)&&
+  Number.isFinite(Number(r.amount))&&Number(r.amount)>0&&Number.isFinite(Date.parse(r.when))}
+function load(){
+  try{const x=JSON.parse(localStorage.getItem(RKEY)||'[]');R=Array.isArray(x)?x.filter(valid).map(r=>({...r,amount:+r.amount})):[]}catch(e){R=[]}
+  try{S={...DEF,...JSON.parse(localStorage.getItem(SKEY)||'{}')}}catch(e){S={...DEF}}
+  if(!Array.isArray(S.reasons))S.reasons=[];
+}
+function persist(){
+  try{localStorage.setItem(RKEY,JSON.stringify(R));localStorage.setItem(SKEY,JSON.stringify(S))}
+  catch(e){toast('Could not save — browser storage is full or blocked.')}
+  render();
+}
 
-function sameDay(a,b){
-  return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+/* ---------- core calculations ---------- */
+function dayMap(){
+  const m={};
+  for(const r of R){
+    const i=dIdx(new Date(r.when));const d=m[i]||(m[i]={t:0,b:0,j:0,n:0,tob:0,res:0,cost:0});
+    if(r.type==='resist'){d.res++;continue}
+    d.t+=r.amount;d[r.type==='bong'?'b':'j']+=r.amount;d.n++;d.cost+=costOf(r);
+    if(r.tobacco==='yes')d.tob++;
+  }
+  return m;
 }
-function fmtDate(s){
-  return new Date(s).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+function allowance(i){
+  if(!S.planStart)return null;
+  const s=dIdx(new Date(S.planStart));if(i<s)return null;
+  if(S.mode==='quit'){
+    if(!S.quitDate||!(S.baseline>0))return 0;
+    const q=dIdx(new Date(S.quitDate+'T12:00'));if(i>=q)return 0;
+    return Math.max(0,Math.ceil(S.baseline*(1-(i-s)/Math.max(1,q-s))*2)/2);
+  }
+  if(!(S.baseline>0))return null;
+  const weeks=Math.floor((i-s)/Math.max(1,S.stepEvery));
+  return Math.max(+S.floor||0,S.baseline-S.step*weeks);
 }
-function duration(s){
-  if(!s)return 'No log yet';
-  const ms=Math.max(0,Date.now()-new Date(s).getTime());
-  const days=Math.floor(ms/86400000);
-  const hours=Math.floor(ms%86400000/3600000);
-  const mins=Math.floor(ms%3600000/60000);
-  if(days>0)return `${days}d ${hours}h`;
-  if(hours>0)return `${hours}h ${mins}m`;
-  return `${mins}m`;
+function lastUse(type){let t=0;for(const r of R)if(isUse(r)&&(!type||r.type===type)){const w=Date.parse(r.when);if(w>t&&w<=Date.now()+6e4)t=w}return t?new Date(t):null}
+function sumRange(m,from,to,key='t'){let s=0;for(let i=from;i<=to;i++)s+=m[i]?.[key]||0;return s}
+function streak(m){
+  const t=dIdx(new Date());let n=0;
+  for(let i=t-1;;i--){const a=allowance(i);if(a==null)break;if((m[i]?.t||0)<=a)n++;else break}
+  const at=allowance(t);return n+(at!=null&&(m[t]?.t||0)<=at?1:0);
 }
-function lastUse(type){
-  return records.filter(r=>r.type===type).sort((a,b)=>Date.parse(b.when)-Date.parse(a.when))[0]?.when||null;
+function nextInfo(m){
+  const now=new Date(),t=dIdx(now);
+  if(S.firstTime&&!(m[t]?.t)&&now.getHours()>=S.dayStart){
+    const [hh,mi]=S.firstTime.split(':').map(Number);const d=new Date(now);d.setHours(hh,mi,0,0);
+    if(d>now)return {until:d,label:'Plan: first session not before'};
+  }
+  const lu=lastUse();
+  if(S.gap>0&&lu){const d=new Date(lu.getTime()+S.gap*6e4);if(d>now)return {until:d,label:'Plan: next session not before'}}
+  return null;
 }
+function suggestedBaseline(m){
+  const t=dIdx(new Date());let days=0,s=0;
+  for(let i=t-7;i<t;i++){if(m[i]){days++;s+=m[i].t}}
+  return days>=3?Math.round(s/7*2)/2:null;
+}
+
+/* ---------- navigation ---------- */
+function go(v){view=v;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));urgeState='';render();scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.v)));
 function render(){
-  const now=new Date();
-  const sorted=[...records].sort((a,b)=>Date.parse(b.when)-Date.parse(a.when));
-  const today=records.filter(r=>sameDay(new Date(r.when),now));
-  const b=today.filter(r=>r.type==='bong').reduce((s,r)=>s+r.amount,0);
-  const j=today.filter(r=>r.type==='joint').reduce((s,r)=>s+r.amount,0);
-  document.getElementById('bToday').textContent=Number(b.toFixed(2));
-  document.getElementById('jToday').textContent=Number(j.toFixed(2));
-  document.getElementById('bTimer').textContent=duration(lastUse('bong'));
-  document.getElementById('jTimer').textContent=duration(lastUse('joint'));
-  document.getElementById('todayTotal').textContent=Number((b+j).toFixed(2));
-  const weekStart=new Date(now);weekStart.setDate(now.getDate()-6);weekStart.setHours(0,0,0,0);
-  const week=records.filter(r=>new Date(r.when)>=weekStart&&new Date(r.when)<=now)
-    .reduce((s,r)=>s+r.amount,0);
-  document.getElementById('weekTotal').textContent=Number(week.toFixed(2));
-  const goal=Number(document.getElementById('goal').value);
-  document.getElementById('goalStatus').textContent=goal>0?(b+j<=goal?'Within target':'Above target'):'No target set';
-  document.getElementById('count').textContent=`${records.length} record${records.length===1?'':'s'}`;
-  const hist=document.getElementById('history');
-  hist.replaceChildren();
-  if(!sorted.length){hist.innerHTML='<div class="empty">No sessions logged yet. Your first entry will appear here.</div>';return;}
-  sorted.slice(0,100).forEach(r=>{
-    const el=document.createElement('div');el.className='entry';
-    const top=document.createElement('div');top.className='entrytop';
-    const left=document.createElement('div');
-    const title=document.createElement('strong');
-    title.textContent=(r.type==='bong'?'Bong':'Joint')+' · '+r.amount+' '+(r.unit==='grams'?'g':r.unit);
-    const time=document.createElement('div');time.className='small';time.textContent=fmtDate(r.when);
-    left.append(title,time);top.append(left);
-    const del=document.createElement('button');del.className='secondary';del.type='button';del.textContent='Delete';
-    del.addEventListener('click',()=>{
-      if(confirm('Delete this record?')){records=records.filter(x=>x.id!==r.id);save();}
-    });
-    top.append(del);el.append(top);
-    const details=[r.tobacco==='yes'?'Tobacco mixed':r.tobacco==='no'?'No tobacco recorded':'',r.trigger,r.notes].filter(Boolean);
-    if(details.length){const p=document.createElement('p');p.style.margin='8px 0 0';p.textContent=details.join(' · ');el.append(p);}
-    hist.append(el);
+  const m=dayMap();
+  ({today:rToday,sos:rSOS,plan:rPlan,insights:rInsights,more:rMore})[view](m);
+}
+
+/* ---------- toast ---------- */
+function toast(msg,undo){
+  const t=$('toast');t.replaceChildren(h('span',{textContent:msg}));
+  if(undo)t.append(h('button',{class:'link',textContent:'Undo',onclick:()=>{undo();t.classList.remove('on')}}));
+  t.classList.add('on');clearTimeout(toast.tm);toast.tm=setTimeout(()=>t.classList.remove('on'),5000);
+}
+function addRecord(r,msg){R.push(r);persist();toast(msg,()=>{R=R.filter(x=>x.id!==r.id);persist()})}
+function resisted(){
+  const r={id:uid(),type:'resist',amount:1,when:new Date().toISOString()};
+  const m=dayMap(),t=dIdx(new Date());const wk=sumRange(m,t-6,t,'res')+1;
+  addRecord(r,`Craving beaten 💪 That's ${wk} this week.`);
+}
+
+/* ---------- TODAY ---------- */
+function rToday(m){
+  const v=$('v-today');v.replaceChildren();
+  const now=new Date(),t=dIdx(now),a=allowance(t),used=m[t]?.t||0,lu=lastUse();
+  const hasUse=R.some(isUse);
+
+  if(!hasUse&&!S.planStart){
+    v.append(h('div',{class:'card'},h('h2',{textContent:'Start here'}),
+      h('p',{textContent:'Cutting down works best in three steps:'}),
+      h('ul',{class:'tidy'},
+        h('li',{textContent:'Log every session for 3–7 days, without changing anything. That shows your real starting point.'}),
+        h('li',{textContent:'Set a plan that steps down slowly — small cuts stick better than big ones.'}),
+        h('li',{textContent:'When a craving hits, open 🛟 Craving and ride it out for 10 minutes.'})),
+      h('p',{class:'small',textContent:'Logging takes two taps. Be honest — nobody sees this but you.'})));
+  }
+
+  const lb=lastUse('bong'),lj=lastUse('joint');
+  v.append(h('div',{class:'card hero'},
+    h('div',{class:'small',textContent:'Time since your last session'}),
+    h('div',{class:'heroT',id:'heroT',textContent:lu?dur(now-lu):'—'}),
+    h('div',{class:'small',textContent:`Bong: ${lb?dur(now-lb)+' ago':'—'}  ·  Joint: ${lj?dur(now-lj)+' ago':'—'}`})));
+
+  // withdrawal reassurance when going a long time without
+  if(lu&&now-lu>20*36e5){
+    const days=Math.floor((now-lu)/864e5);
+    const msg=days<1?'Nearly a full day. Irritability or poor sleep tonight is withdrawal, not you — it passes.'
+      :days<7?`Day ${days+1} without. Withdrawal often peaks around days 2–6 and then eases. You're in the hardest stretch.`
+      :days<30?`${days} days. The worst of withdrawal is usually behind you now. Sleep and dreams can take a few more weeks to settle.`
+      :`${days} days. That's a big deal.`;
+    v.append(h('div',{class:'notice good',textContent:msg}));
+  }
+
+  // plan progress
+  if(a==null){
+    v.append(h('div',{class:'card'},h('div',{class:'row between'},h('h2',{style:'margin:0',textContent:'Today'}),h('span',{class:'pill',textContent:'No plan yet'})),
+      h('div',{class:'bignum'},h('b',{textContent:fmtN(used)}),h('span',{textContent:' used today'})),
+      h('button',{class:'ghost wide',textContent:'Set up my plan',onclick:()=>go('plan')})));
+  }else{
+    const over=used>a,pct=a>0?Math.min(100,used/a*100):(used>0?100:0);
+    const msg=a===0&&used===0?'Nothing used today. Keep going.'
+      :over?`${fmtN(used-a)} over today's plan. That's okay — log honestly, and try to stretch the gap before the next one.`
+      :a-used>0?`${fmtN(a-used)} left in today's plan. You don't have to use them.`
+      :'You\u2019ve reached today\u2019s plan. Every one you skip from here is a win.';
+    v.append(h('div',{class:'card'},
+      h('div',{class:'row between'},h('h2',{style:'margin:0',textContent:'Today'}),
+        h('span',{class:'pill',textContent:a===0?'Zero day':'Plan day '+(t-dIdx(new Date(S.planStart))+1)})),
+      h('div',{class:'bignum'},h('b',{textContent:fmtN(used)}),h('span',{textContent:` of ${fmtN(a)} planned`})),
+      h('div',{class:'bar'+(over?' over':'')},h('i',{style:`width:${pct}%`})),
+      h('p',{textContent:msg})));
+  }
+
+  const nx=nextInfo(m);
+  if(nx)v.append(h('div',{class:'notice'},h('div',{textContent:`${nx.label} ${clock(nx.until)}`}),
+    h('b',{id:'nextT',style:'font-size:20px',textContent:dur(nx.until-now)+' to go'})));
+
+  v.append(h('div',{class:'grid3',style:'margin:12px 0'},
+    h('button',{class:'ghost big',onclick:()=>openLog('bong')},h('span',{textContent:'💨'}),'Log bong'),
+    h('button',{class:'ghost big',onclick:()=>openLog('joint')},h('span',{textContent:'🚬'}),'Log joint'),
+    h('button',{class:'big',onclick:resisted},h('span',{textContent:'💪'}),'I resisted')));
+  v.append(h('button',{class:'amber wide',textContent:'🛟  I\u2019m craving right now — help me',onclick:()=>{go('sos');startUrge(10)}}));
+
+  // week summary
+  const wk=sumRange(m,t-6,t),pw=sumRange(m,t-13,t-7);
+  const res=sumRange(m,t-6,t,'res'),sess=sumRange(m,t-6,t,'n'),tob=sumRange(m,t-6,t,'tob');
+  const spent=sumRange(m,t-6,t,'cost');
+  const change=pw>0?Math.round((wk-pw)/pw*100):null;
+  const st=S.planStart?streak(m):null;
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Last 7 days'}),
+    h('div',{class:'grid2'},
+      h('div',{class:'stat'},h('span',{class:'small',textContent:'Total used'}),h('b',{textContent:fmtN(wk)}),
+        h('span',{class:'small',style:`color:${change==null?'var(--muted)':change<=0?'var(--green)':'var(--amber)'}`,textContent:change==null?'vs last week: —':`${change>0?'+':''}${change}% vs last week`})),
+      h('div',{class:'stat'},h('span',{class:'small',textContent:'Cravings resisted'}),h('b',{textContent:res})),
+      h('div',{class:'stat'},h('span',{class:'small',textContent:'With tobacco'}),h('b',{textContent:sess?Math.round(tob/sess*100)+'%':'—'}),h('span',{class:'small',textContent:`${tob} of ${sess} sessions`})),
+      st!=null?h('div',{class:'stat'},h('span',{class:'small',textContent:'Days on plan (streak)'}),h('b',{textContent:st}))
+        :h('div',{class:'stat'},h('span',{class:'small',textContent:'Spent'}),h('b',{textContent:S.costBong||S.costJoint?money(spent):'—'}),h('span',{class:'small',textContent:S.costBong||S.costJoint?'':'Add prices in Plan'})))));
+}
+
+/* ---------- LOG SHEET ---------- */
+function closeSheet(){$('sheetWrap').hidden=true;$('sheet').replaceChildren()}
+$('sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap')closeSheet()});
+function chipGroup(opts,get,set){
+  const g=h('div',{class:'chips'});
+  opts.forEach(([val,lab])=>{const c=h('button',{type:'button',class:'chip'+(get()===val?' on':''),textContent:lab,onclick:()=>{
+    set(get()===val?'':val);g.querySelectorAll('.chip').forEach((x,i)=>x.classList.toggle('on',opts[i][0]===get()))}});g.append(c)});
+  return g;
+}
+function openLog(type){
+  const f={type,amount:1,tobacco:S.tobaccoDefault||'yes',trigger:'',craving:'',note:'',when:localInput()};
+  const step=type==='joint'?0.5:1;const sh=$('sheet');
+  function draw(){
+    const keep=sh.scrollTop;sh.replaceChildren();
+    const m=dayMap(),now=new Date(),t=dIdx(now),a=allowance(t),used=m[t]?.t||0,warns=[];
+    if(a!=null&&used+f.amount>a)warns.push(a===0?'Your plan for today is zero.':`This takes today to ${fmtN(used+f.amount)}. Your plan is ${fmtN(a)}.`);
+    const nx=nextInfo(m);if(nx)warns.push(`${nx.label} ${clock(nx.until)} — ${dur(nx.until-now)} from now.`);
+    if(S.noTobaccoGoal&&f.tobacco==='yes')warns.push('Your goal is to stop mixing tobacco. Could this one be without?');
+    const unit=type==='bong'?(f.amount===1?'session':'sessions'):(f.amount===1?'joint':'joints');
+    sh.append(
+      h('div',{class:'row between'},h('h2',{style:'margin:0',textContent:type==='bong'?'Log a bong session':'Log a joint'}),
+        h('button',{class:'ghost sm',textContent:'✕',onclick:closeSheet})),
+      warns.length?h('div',{class:'notice'},warns.map(w=>h('div',{textContent:'• '+w})),
+        h('button',{class:'amber wide',style:'margin-top:10px',textContent:'Wait 10 minutes first',onclick:()=>{closeSheet();go('sos');startUrge(10)}})):null,
+      h('label',{textContent:'How many'}),
+      h('div',{class:'stepper'},
+        h('button',{class:'ghost',type:'button',textContent:'−',onclick:()=>{f.amount=Math.max(step,+(f.amount-step).toFixed(1));draw()}}),
+        h('b',{textContent:`${fmtN(f.amount)} ${unit}`}),
+        h('button',{class:'ghost',type:'button',textContent:'+',onclick:()=>{f.amount=Math.min(50,+(f.amount+step).toFixed(1));draw()}})),
+      h('label',{textContent:'Tobacco mixed in?'}),
+      h('div',{class:'chips'},[['yes','Yes, with tobacco'],['no','No tobacco']].map(([val,lab])=>
+        h('button',{type:'button',class:'chip'+(f.tobacco===val?' on':''),textContent:lab,onclick:()=>{f.tobacco=val;draw()}}))),
+      h('label',{textContent:'What set it off? (optional)'}),
+      chipGroup(TRIGGERS.map(x=>[x,x]),()=>f.trigger,x=>f.trigger=x),
+      h('label',{textContent:'How strong was the craving? (optional)'}),
+      chipGroup([['1','1 mild'],['2','2'],['3','3'],['4','4'],['5','5 intense']],()=>f.craving,x=>f.craving=x),
+      h('label',{textContent:'When'}),
+      h('input',{type:'datetime-local',value:f.when,oninput:e=>f.when=e.target.value}),
+      h('label',{textContent:'Note (optional)'}),
+      h('textarea',{rows:2,maxLength:500,value:f.note,placeholder:'Mood, where you were, what might have helped…',oninput:e=>f.note=e.target.value}),
+      h('button',{class:'wide',style:'margin-top:16px',textContent:'Save',onclick:()=>{
+        const w=new Date(f.when);
+        if(!Number.isFinite(w.getTime())||w.getTime()>Date.now()+6e4){toast('Pick a time that isn\u2019t in the future.');return}
+        closeSheet();
+        addRecord({id:uid(),type,when:w.toISOString(),amount:f.amount,unit:'sessions',tobacco:f.tobacco,trigger:f.trigger,craving:f.craving,notes:f.note.trim()},
+          'Logged. Honest tracking is how this works.');
+      }}));
+    sh.scrollTop=keep;
+  }
+  draw();$('sheetWrap').hidden=false;
+}
+
+/* ---------- SOS ---------- */
+function startUrge(min){urgeLen=min*6e4;urgeEnd=Date.now()+urgeLen;urgeState='';renderUrge()}
+function renderUrge(){
+  const box=$('urgeBox');if(!box)return;
+  const now=Date.now(),st=!urgeEnd?'idle':now<urgeEnd?'run':'done';
+  const tick=()=>{const left=Math.max(0,urgeEnd-Date.now()),T=$('urgeT');if(!T)return;
+    T.textContent=`${Math.floor(left/6e4)}:${String(Math.floor(left%6e4/1e3)).padStart(2,'0')}`;
+    $('urgeBar').style.width=(100-left/urgeLen*100)+'%';
+    $('urgeTip').textContent=TIPS[Math.floor((urgeLen-left)/2e4)%TIPS.length];};
+  if(st===urgeState){if(st==='run')tick();return}
+  urgeState=st;box.replaceChildren();
+  if(st==='idle'){
+    box.append(h('div',{class:'heroT',textContent:'10:00'}),
+      h('div',{class:'grid2'},h('button',{textContent:'Start 10 min',onclick:()=>startUrge(10)}),h('button',{class:'ghost',textContent:'Start 20 min',onclick:()=>startUrge(20)})));
+  }else if(st==='run'){
+    box.append(h('div',{class:'heroT',id:'urgeT',textContent:''}),h('div',{class:'bar'},h('i',{id:'urgeBar',style:'width:0'})),
+      h('p',{id:'urgeTip',style:'min-height:42px;color:var(--white)'}),
+      h('div',{class:'grid2'},h('button',{class:'ghost',textContent:'+5 min',onclick:()=>{urgeEnd+=3e5;urgeLen+=3e5}}),
+        h('button',{class:'ghost',textContent:'Stop timer',onclick:()=>{urgeEnd=0;renderUrge()}})));
+    tick();
+  }else{
+    box.append(h('h2',{textContent:'Time\u2019s up. How is the craving now?'}),
+      h('button',{class:'wide',textContent:'It passed — count it as resisted 💪',onclick:()=>{urgeEnd=0;resisted();renderUrge()}}),
+      h('div',{class:'grid2',style:'margin-top:8px'},
+        h('button',{class:'ghost',textContent:'Still there: 5 more min',onclick:()=>startUrge(5)}),
+        h('button',{class:'ghost',textContent:'I\u2019m going to smoke',onclick:()=>{urgeEnd=0;renderUrge();openLog('bong')}})));
+  }
+}
+function breathTick(){
+  const c=$('breath');if(!c)return;
+  if(!breathOn){if(c.dataset.ph!=='off'){c.dataset.ph='off';c.style.transition='transform 1s';c.style.transform='scale(.62)';c.textContent='Tap start'}return}
+  const e=(Date.now()-breathT0)%14000;let ph,lab,left;
+  if(e<4000){ph='in';lab='Breathe in';left=4000-e}else if(e<8000){ph='hold';lab='Hold';left=8000-e}else{ph='out';lab='Breathe out';left=14000-e}
+  if(c.dataset.ph!==ph){c.dataset.ph=ph;
+    if(ph==='in'){c.style.transition='transform 4s ease-in-out';c.style.transform='scale(1)'}
+    if(ph==='out'){c.style.transition='transform 6s ease-in-out';c.style.transform='scale(.62)'}}
+  c.textContent=`${lab}\n${Math.ceil(left/1000)}`;c.style.whiteSpace='pre-line';
+}
+function rSOS(){
+  const v=$('v-sos');v.replaceChildren();
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Ride the wave'}),
+    h('p',{textContent:'A craving builds, peaks and fades — usually within 15–20 minutes, whether you smoke or not. You don\u2019t have to fight it. Just wait it out.'}),
+    h('div',{id:'urgeBox',style:'text-align:center'})));
+  v.append(h('div',{class:'card',style:'text-align:center'},h('h2',{textContent:'Slow breathing'}),
+    h('p',{textContent:'In for 4, hold for 4, out for 6. A long out-breath calms the body down.'}),
+    h('div',{class:'breath',id:'breath'}),
+    h('button',{class:'ghost',textContent:breathOn?'Stop':'Start breathing',onclick:e=>{breathOn=!breathOn;breathT0=Date.now();e.target.textContent=breathOn?'Stop':'Start breathing';breathTick()}})));
+  const rs=S.reasons.filter(Boolean);
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Why I\u2019m doing this'}),
+    rs.length?h('ul',{class:'tidy',style:'color:var(--white);font-size:16px'},rs.map(x=>h('li',{textContent:x})))
+      :h('p',{textContent:'Write down your own reasons in Plan. Reading them in your own words during a craving helps more than anything generic.'}),
+    h('button',{class:'ghost sm',textContent:rs.length?'Edit reasons':'Add my reasons',onclick:()=>go('plan')})));
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Do one of these instead'}),
+    h('ul',{class:'tidy'},['Leave the room or place where you usually smoke','Drink a big glass of cold water','Go for a 10-minute walk','Take a shower or wash your face with cold water','Eat something — hunger makes cravings louder','Chew gum (helps with the nicotine side too)','Call or message a friend','Keep your hands busy: phone game, cleaning, cooking'].map(x=>h('li',{textContent:x})))));
+  v.append(h('div',{class:'card'},h('h2',{textContent:'If you decide to smoke anyway'}),
+    h('p',{textContent:'No guilt — log it honestly. Then try one smaller step: a smaller bowl, no tobacco this time, or waiting 15 more minutes. Small wins add up.'})));
+  urgeState='';renderUrge();breathTick();
+}
+
+/* ---------- PLAN ---------- */
+function rPlan(m){
+  const v=$('v-plan');v.replaceChildren();
+  const sug=suggestedBaseline(m);const draft={...S};
+  const num=(id,val,attrs={})=>h('input',{id,type:'number',inputMode:'decimal',value:val,min:0,step:'any',...attrs});
+  const modeBox=h('div');
+  function drawMode(){
+    modeBox.replaceChildren();
+    if(draft.mode==='reduce'){
+      modeBox.append(
+        h('label',{textContent:'Cut by how many per day…'}),num('pStep',draft.step,{step:0.5}),
+        h('label',{textContent:'…every'}),
+        h('select',{id:'pEvery'},[[3,'3 days'],[7,'week'],[14,'2 weeks']].map(([d,l])=>h('option',{value:d,textContent:l,selected:+draft.stepEvery===d}))),
+        h('label',{textContent:'Stop cutting at (0 = keep going to zero)'}),num('pFloor',draft.floor));
+    }else{
+      modeBox.append(h('label',{textContent:'Quit date (leave empty to quit today)'}),
+        h('input',{id:'pQuit',type:'date',value:draft.quitDate||''}),
+        h('p',{class:'small',textContent:'If you pick a date, your daily plan tapers smoothly from your starting amount down to zero on that day.'}));
+    }
+  }
+  drawMode();
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Your goal'}),
+    h('div',{class:'chips'},[['reduce','Cut down gradually'],['quit','Quit']].map(([val,lab])=>
+      h('button',{type:'button',class:'chip'+(draft.mode===val?' on':''),textContent:lab,onclick:e=>{draft.mode=val;
+        e.target.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===e.target));drawMode()}}))),
+    h('label',{textContent:'Starting point: how many bong sessions + joints a day now?'}),
+    num('pBase',draft.baseline||'',{placeholder:'e.g. 10'}),
+    sug!=null?h('div',{class:'row',style:'margin-top:6px'},h('span',{class:'small',textContent:`Your last 7 days averaged ${fmtN(sug)} a day.`}),
+      h('button',{class:'link sm',textContent:'Use this',onclick:()=>$('pBase').value=sug})):
+      h('p',{class:'small',textContent:'Tip: log for a few days first and the app will suggest your real number.'}),
+    modeBox,
+    S.planStart?h('label',{class:'check'},h('input',{type:'checkbox',id:'pRestart'}),'Restart the plan from today'):null));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Spacing'}),
+    h('p',{class:'small',textContent:'Stretching the time between sessions is one of the easiest ways to cut down.'}),
+    h('label',{textContent:'Minimum gap between sessions'}),
+    h('select',{id:'pGap'},[0,30,45,60,90,120,180,240,360].map(x=>h('option',{value:x,selected:+draft.gap===x,textContent:x?(x<60?x+' minutes':(x/60)+' hours'):'Off'}))),
+    h('label',{textContent:'First session of the day not before (optional)'}),
+    h('input',{type:'time',id:'pFirst',value:draft.firstTime||''}),
+    h('p',{class:'small',textContent:'Pushing back the first one each morning breaks the wake-up habit.'})));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Tobacco'}),
+    h('p',{textContent:'Mixing tobacco adds a second addiction — nicotine. A lot of the urge to smoke can be nicotine, not cannabis. Cutting the tobacco out (or down) of your mix is a strong first step.'}),
+    h('label',{textContent:'When logging, assume tobacco is…'}),
+    h('select',{id:'pTobDef'},[['yes','Mixed in'],['no','Not mixed in']].map(([val,l])=>h('option',{value:val,textContent:l,selected:draft.tobaccoDefault===val}))),
+    h('label',{class:'check',style:'margin-top:12px'},h('input',{type:'checkbox',id:'pNoTob',checked:!!draft.noTobaccoGoal}),'My goal: stop mixing tobacco')));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Money'}),
+    h('div',{class:'grid2'},
+      h('div',null,h('label',{textContent:'Cost per bong session'}),num('pCB',draft.costBong||'')),
+      h('div',null,h('label',{textContent:'Cost per joint'}),num('pCJ',draft.costJoint||''))),
+    h('label',{textContent:'Currency symbol'}),h('input',{id:'pCur',value:draft.currency,maxLength:4})));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'My reasons'}),
+    h('p',{class:'small',textContent:'One per line. These show up on the Craving screen.'}),
+    h('textarea',{id:'pReasons',rows:4,value:draft.reasons.join('\n'),placeholder:'Sleep better\nSave money\nClearer head for work\nStop coughing in the morning'})));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Day starts at'}),
+    h('select',{id:'pDay'},[0,2,3,4,5,6].map(x=>h('option',{value:x,selected:+draft.dayStart===x,textContent:x===0?'Midnight':x+':00 am'}))),
+    h('p',{class:'small',textContent:'Late-night sessions before this time count toward the previous day.'})));
+
+  const preview=h('p',{class:'small'});
+  v.append(h('button',{class:'wide',textContent:'Save plan',onclick:()=>{
+    const n=id=>{const x=parseFloat($(id)?.value);return Number.isFinite(x)&&x>=0?x:0};
+    S.mode=draft.mode;S.baseline=n('pBase');
+    if(S.mode==='reduce'){S.step=n('pStep')||1;S.stepEvery=+$('pEvery').value;S.floor=n('pFloor')}else{S.quitDate=$('pQuit').value}
+    S.gap=+$('pGap').value;S.firstTime=$('pFirst').value;S.tobaccoDefault=$('pTobDef').value;S.noTobaccoGoal=$('pNoTob').checked;
+    S.costBong=n('pCB');S.costJoint=n('pCJ');S.currency=$('pCur').value.trim()||'₹';
+    S.reasons=$('pReasons').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,20);
+    S.dayStart=+$('pDay').value;
+    if(!S.planStart||$('pRestart')?.checked)S.planStart=new Date().toISOString();
+    if(S.mode==='reduce'&&!(S.baseline>0)){toast('Add your starting number to get a daily plan.')}else toast('Plan saved.');
+    persist();
+  }}),preview);
+
+  if(S.planStart){
+    const t=dIdx(new Date());const parts=[];
+    for(let k=0;k<5;k++){const i=t+k*(S.mode==='reduce'?Math.max(1,S.stepEvery):7);const a=allowance(i);if(a==null)break;
+      parts.push(`${k===0?'Today':idxLabel(i,{month:'short',day:'numeric'})}: ${fmtN(a)}/day`)}
+    if(parts.length)preview.textContent='Your plan ahead → '+parts.join('  ·  ');
+  }
+}
+
+/* ---------- INSIGHTS ---------- */
+function rInsights(m){
+  const v=$('v-insights');v.replaceChildren();
+  const t=dIdx(new Date());
+  if(!R.some(isUse)){v.append(h('div',{class:'card'},h('h2',{textContent:'Nothing to show yet'}),h('p',{textContent:'Log your sessions for a few days and your patterns will appear here.'})));v.append(withdrawalCard());return}
+
+  // 14-day chart
+  const days=[...Array(14)].map((_,k)=>t-13+k);
+  const mx=Math.max(1,...days.map(i=>Math.max(m[i]?.t||0,allowance(i)||0)));
+  const chart=h('div',{class:'chart'}),lbls=h('div',{class:'lbls'});
+  days.forEach(i=>{const u=m[i]?.t||0,a=allowance(i);
+    const col=h('div',{class:'col'},h('div',{class:'n',textContent:u?fmtN(u):''}),
+      h('div',{class:'v'+(u===0?' zero':a!=null&&u>a?' over':''),style:`height:${u/mx*100}%`}));
+    if(a!=null)col.append(h('div',{class:'cap',style:`bottom:${a/mx*100}%`}));
+    chart.append(col);lbls.append(h('span',{textContent:idxLabel(i,{weekday:'narrow'})}))});
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Last 14 days'}),chart,lbls,
+    h('p',{class:'small',textContent:'Dashed line = your plan for that day. Amber = over plan.'})));
+
+  // summary
+  const a7=sumRange(m,t-6,t)/7,p7=sumRange(m,t-13,t-7)/7;
+  const uses=R.filter(r=>isUse(r)&&Date.parse(r.when)>=Date.now()-7*864e5).map(r=>Date.parse(r.when)).sort((a,b)=>a-b);
+  let gap=0;for(let k=1;k<uses.length;k++)gap=Math.max(gap,uses[k]-uses[k-1]);if(uses.length)gap=Math.max(gap,Date.now()-uses[uses.length-1]);
+  let best=null;for(let i=t-6;i<t;i++){const u=m[i]?.t||0;if(best==null||u<best.u)best={i,u}}
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Your week'}),h('div',{class:'grid2'},
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Daily average'}),h('b',{textContent:fmtN(a7)}),
+      h('span',{class:'small',textContent:p7?`was ${fmtN(p7)} the week before`:''})),
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Longest break'}),h('b',{textContent:uses.length?dur(gap):'—'})),
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Lowest day'}),h('b',{textContent:best?fmtN(best.u):'—'}),
+      h('span',{class:'small',textContent:best?idxLabel(best.i,{weekday:'long'}):''})),
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Cravings resisted'}),h('b',{textContent:sumRange(m,t-6,t,'res')})))));
+
+  const last30=R.filter(r=>isUse(r)&&Date.parse(r.when)>=Date.now()-30*864e5);
+
+  // time of day
+  const buckets=[...Array(8)].map(()=>0);last30.forEach(r=>buckets[Math.floor(new Date(r.when).getHours()/3)]+=r.amount);
+  const bmx=Math.max(1,...buckets);const top=buckets.indexOf(Math.max(...buckets));
+  const lab=k=>`${String(k*3).padStart(2,'0')}–${String(k*3+3).padStart(2,'0')}`;
+  v.append(h('div',{class:'card'},h('h2',{textContent:'When you smoke (30 days)'}),
+    buckets.map((b,k)=>h('div',{class:'hb'},h('span',{textContent:lab(k)}),h('div',{class:'t'},h('i',{style:`width:${b/bmx*100}%`})),h('span',{class:'small',textContent:fmtN(b)}))),
+    last30.length?h('p',{textContent:`Your busiest time is ${lab(top)}. Plan something specific for that window — that\u2019s where the habit lives.`}):null));
+
+  // triggers
+  const tc={};let cr=0,crn=0;last30.forEach(r=>{if(r.trigger)tc[r.trigger]=(tc[r.trigger]||0)+1;if(r.craving){cr+=+r.craving;crn++}});
+  const tl=Object.entries(tc).sort((a,b)=>b[1]-a[1]);const tmx=Math.max(1,...tl.map(x=>x[1]));
+  v.append(h('div',{class:'card'},h('h2',{textContent:'What sets it off (30 days)'}),
+    tl.length?tl.map(([k,n])=>h('div',{class:'hb'},h('span',{textContent:k}),h('div',{class:'t'},h('i',{style:`width:${n/tmx*100}%`})),h('span',{class:'small',textContent:n}))):
+      h('p',{textContent:'Tag a trigger when you log and you\u2019ll see your patterns here.'}),
+    tl.length&&tl[0][0]==='Boredom'?h('p',{textContent:'Boredom is your top trigger. Having a ready-made 10-minute activity can cover a lot of sessions.'}):null,
+    tl.length&&tl[0][0]==='Just woke up'?h('p',{textContent:'Waking up is your top trigger. Try setting a "first session not before" time in Plan.'}):null,
+    tl.length&&tl[0][0]==='Stress'?h('p',{textContent:'Stress is your top trigger. The breathing tool on the Craving screen is built for exactly this.'}):null,
+    crn?h('p',{class:'small',textContent:`Average craving strength: ${fmtN(cr/crn)} / 5`}):null));
+
+  // tobacco + money
+  const tob30=last30.filter(r=>r.tobacco==='yes').length;
+  const spent30=last30.reduce((s,r)=>s+costOf(r),0),hasCost=S.costBong||S.costJoint;
+  let saved=null;
+  if(hasCost&&S.planStart&&S.baseline>0){
+    const s=dIdx(new Date(S.planStart));const nd=t-s+1;
+    const usedSince=sumRange(m,s,t);const bShare=(()=>{let b=0,j=0;last30.forEach(r=>r.type==='bong'?b+=r.amount:j+=r.amount);return b+j?b/(b+j):1})();
+    const unit=bShare*(+S.costBong||0)+(1-bShare)*(+S.costJoint||0);
+    saved=Math.max(0,(S.baseline*nd-usedSince)*unit);
+  }
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Tobacco & money'}),h('div',{class:'grid2'},
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Sessions with tobacco (30d)'}),h('b',{textContent:last30.length?Math.round(tob30/last30.length*100)+'%':'—'})),
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Spent (30d)'}),h('b',{textContent:hasCost?money(spent30):'—'})),
+    saved!=null?h('div',{class:'stat',style:'grid-column:1/-1'},h('span',{class:'small',textContent:'Saved vs your starting point, since plan began'}),h('b',{style:'color:var(--green)',textContent:money(saved)})):null),
+    !hasCost?h('p',{class:'small',textContent:'Add your prices in Plan to see money spent and saved.'}):null));
+
+  v.append(withdrawalCard());
+}
+function withdrawalCard(){
+  return h('div',{class:'card'},h('h2',{textContent:'What to expect when you cut down'}),
+    h('h3',{textContent:'Cannabis withdrawal'}),
+    h('p',{textContent:'Common: irritability, anxiety, restlessness, low appetite, trouble sleeping, vivid dreams, low mood and strong cravings. It usually starts within 1–2 days, is often worst around days 2–6, and mostly eases within 1–2 weeks. Sleep can take a few weeks to settle.'}),
+    h('h3',{textContent:'Nicotine withdrawal (from the tobacco in your mix)'}),
+    h('p',{textContent:'Cravings, irritability, poor focus and more appetite — strongest in the first few days, easing over 2–4 weeks. Nicotine gum or patches can help; ask a pharmacist or doctor.'}),
+    h('h3',{textContent:'Get help if'}),
+    h('p',{textContent:'Your mood drops badly, you can\u2019t sleep for days, or you have thoughts of harming yourself. A doctor can help a lot with withdrawal. See the free helplines under More.'}));
+}
+
+/* ---------- MORE ---------- */
+function rMore(){
+  const v=$('v-more');v.replaceChildren();
+  const hist=h('div');const sorted=[...R].sort((a,b)=>Date.parse(b.when)-Date.parse(a.when)).slice(0,200);
+  let lastDay=null;
+  if(!sorted.length)hist.append(h('p',{textContent:'No records yet.'}));
+  sorted.forEach(r=>{
+    const di=dIdx(new Date(r.when));
+    if(di!==lastDay){lastDay=di;hist.append(h('div',{class:'dayhead',textContent:idxLabel(di,{weekday:'short',month:'short',day:'numeric'})}))}
+    const title=r.type==='resist'?'💪 Resisted a craving':`${r.type==='bong'?'💨 Bong':'🚬 Joint'} · ${fmtN(r.amount)}${r.unit==='grams'?' g':''}`;
+    const det=[clock(new Date(r.when)),r.tobacco==='yes'?'with tobacco':r.tobacco==='no'?'no tobacco':'',r.trigger,r.craving?`craving ${r.craving}/5`:'',r.notes].filter(Boolean).join(' · ');
+    hist.append(h('div',{class:'entry'},h('div',null,h('div',{textContent:title}),h('div',{class:'small',textContent:det})),
+      h('button',{class:'ghost sm',textContent:'Delete',onclick:()=>{if(confirm('Delete this record?')){R=R.filter(x=>x.id!==r.id);persist()}}})));
   });
+  v.append(h('div',{class:'card'},h('div',{class:'row between'},h('h2',{style:'margin:0',textContent:'History'}),h('span',{class:'pill',textContent:R.length+' records'})),hist));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Backup'}),
+    h('p',{class:'small',textContent:'Your data lives only in this browser on this phone. Export a backup every week or so — if app data is cleared, it\u2019s gone.'}),
+    h('div',{class:'grid2'},h('button',{class:'ghost',textContent:'Export backup',onclick:exportData}),
+      h('button',{class:'ghost',textContent:'Import backup',onclick:()=>$('importFile').click()}))));
+
+  const tel=(name,desc,num,disp)=>h('div',{class:'tel'},h('div',null,h('div',{textContent:name}),h('div',{class:'small',textContent:desc})),h('a',{href:'tel:'+num,textContent:disp,style:'font-weight:700;white-space:nowrap'}));
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Free helplines (India)'}),
+    tel('Drug de-addiction helpline','Govt of India · counselling and referral to treatment · 24×7','14446','14446'),
+    tel('National Tobacco Quit Line','Free counselling to quit tobacco','1800112356','1800-11-2356'),
+    tel('Tele-MANAS','Free mental health support · 24×7','14416','14416'),
+    h('p',{class:'small',textContent:'Many government hospitals also run de-addiction clinics. Talking to a doctor is confidential and they can help with withdrawal.'})));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Lower-risk habits while you cut down'}),h('ul',{class:'tidy'},
+    ['Don\u2019t hold the smoke in — it adds little effect but more tar in your lungs.','Use less tobacco in each mix, and work toward none.','Change bong water often and keep it clean.','Use smaller bowls — one big hit becomes two small ones.','Don\u2019t drive or ride after smoking.','Avoid mixing with alcohol.'].map(x=>h('li',{textContent:x})))));
+
+  v.append(h('div',{class:'card'},h('h2',{textContent:'Danger zone'}),
+    h('button',{class:'danger',textContent:'Delete all data',onclick:()=>{
+      if(confirm('Delete ALL records and your plan? Export a backup first if you want to keep anything.')&&confirm('Really delete everything? This cannot be undone.')){
+        R=[];S={...DEF};persist();toast('All data deleted.')}}})));
+
+  v.append(h('footer',{textContent:'ClearMind stores everything on this device only. Nothing is sent to any server. Anyone who can unlock this phone and open the app can see your records.'}));
 }
 function exportData(){
-  const blob=new Blob([JSON.stringify({app:'ClearMind',version:1,records},null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='clearmind-backup.json';a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const blob=new Blob([JSON.stringify({app:'ClearMind',version:2,exported:new Date().toISOString(),records:R,settings:S},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=h('a',{href:url,download:`clearmind-backup-${new Date().toISOString().slice(0,10)}.json`});
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-document.getElementById('importFile').addEventListener('change',async e=>{
+$('importFile').addEventListener('change',async e=>{
   const file=e.target.files[0];if(!file)return;
   try{
-    const data=JSON.parse(await file.text());
-    const incoming=Array.isArray(data)?data:data.records;
-    if(!Array.isArray(incoming)||!incoming.every(validRecord))throw Error();
-    const ids=new Set(records.map(r=>r.id));
-    let added=0;
-    incoming.forEach(r=>{if(!ids.has(r.id)){records.push(r);ids.add(r.id);added++;}});
-    save();alert(`Imported ${added} new records.`);
-  }catch(err){alert('That backup file is not valid. No records were imported.');}
+    const data=JSON.parse(await file.text());const inc=Array.isArray(data)?data:data.records;
+    if(!Array.isArray(inc))throw Error();
+    const ids=new Set(R.map(r=>r.id));let added=0;
+    inc.filter(valid).forEach(r=>{if(!ids.has(r.id)){R.push({...r,amount:+r.amount});ids.add(r.id);added++}});
+    if(data.settings&&typeof data.settings==='object'&&confirm('Also restore the plan and settings from this backup?'))S={...DEF,...data.settings};
+    persist();toast(`Imported ${added} new records.`);
+  }catch(err){toast('That file isn\u2019t a valid ClearMind backup. Nothing was imported.')}
   e.target.value='';
 });
+
+/* ---------- live ticking ---------- */
+setInterval(()=>{
+  if(view==='today'){const lu=lastUse(),ht=$('heroT');if(ht&&lu)ht.textContent=dur(Date.now()-lu);
+    const nt=$('nextT');if(nt){const nx=nextInfo(dayMap());if(nx)nt.textContent=dur(nx.until-new Date())+' to go';else render()}}
+  if(view==='sos'){renderUrge();breathTick()}
+},500);
+setInterval(()=>{if(view==='today'&&$('sheetWrap').hidden)render()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+
 load();render();
-setInterval(render,30000);
-if('serviceWorker' in navigator && location.protocol!=='file:'){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-}
+if('serviceWorker' in navigator&&location.protocol!=='file:')
+  addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
