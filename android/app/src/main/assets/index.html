@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#101015">
+<title>ClearMind</title>
+<style>
+:root{--bg:#101015;--panel:#18181F;--panel2:#1F1F28;--line:#2A2A35;--text:#F1F0E1;--muted:#9C9B90;--slate:#506385;--mist:#8EA0C2;
+ --sage:#8FA58A;--sageInk:#8FA58A;--ember:#C9925E;--emberInk:#C9925E;--clay:#B5776E;--field:#14141A;--tint:.10;color-scheme:dark;
+ --green:var(--sageInk);--green2:var(--sage);--amber:var(--emberInk);--red:var(--clay);--white:var(--text);
+ --mono:'DM Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:'Instrument Sans',system-ui,-apple-system,Roboto,sans-serif}
+:root[data-theme=light]{--bg:#F1F0E1;--panel:#F8F7EC;--panel2:#EAE8D6;--line:#D6D3BF;--text:#101015;--muted:#64635A;--mist:#506385;
+ --sage:#7E9779;--sageInk:#4F6B4B;--ember:#C9925E;--emberInk:#8A5526;--clay:#B5776E;--field:#FFFEF6;--tint:.16;color-scheme:light}
+@media (prefers-color-scheme:light){:root:not([data-theme]){--bg:#F1F0E1;--panel:#F8F7EC;--panel2:#EAE8D6;--line:#D6D3BF;--text:#101015;--muted:#64635A;--mist:#506385;
+ --sage:#7E9779;--sageInk:#4F6B4B;--ember:#C9925E;--emberInk:#8A5526;--clay:#B5776E;--field:#FFFEF6;--tint:.16;color-scheme:light}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+main{max-width:600px;margin:auto;padding:14px 16px 112px}
+h1{font:500 20px var(--mono);margin:0;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+h1 .ic{color:var(--sage)}
+h2{font:500 15px/1.35 var(--mono);margin:0 0 10px;letter-spacing:-.01em}
+h3{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;margin:20px 0 8px;color:var(--muted)}
+p{margin:6px 0;color:var(--muted)}
+a{color:var(--mist)}
+.small{font-size:12.5px;color:var(--muted)}
+.white{color:var(--text)}
+.label{font:500 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.ic{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.22em;flex:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel2);border-radius:14px;padding:12px 13px;min-width:0}
+.stat b{display:block;font:300 22px var(--mono);margin-top:4px;overflow-wrap:anywhere;letter-spacing:-.02em}
+.stat>.small:first-child{font:500 10px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+button{font:500 13.5px var(--mono);letter-spacing:-.01em;border:0;border-radius:999px;padding:13px 18px;background:var(--text);color:var(--bg);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+button.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+button.amber{background:var(--ember);color:#101015}
+button.danger{background:transparent;color:var(--clay);border:1px solid var(--clay)}
+button.sm{padding:8px 13px;font-size:12px}
+button.link{background:none;color:var(--mist);padding:6px 8px;border-radius:8px}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.4}
+button:focus-visible,input:focus,select:focus,textarea:focus{outline:2px solid var(--slate);outline-offset:2px}
+button.wide{width:100%}
+.mt{margin-top:10px}
+.big{flex-direction:column;gap:8px;padding:16px 6px;border-radius:16px;font-size:12px}
+.big span{font-size:24px;line-height:1}
+.sosbtn{width:100%;padding:20px;border-radius:20px;background:var(--ember);color:#101015;margin:4px 0 6px;flex-direction:column;gap:4px;font-size:17px}
+.sosbtn small{font:400 12.5px var(--sans);opacity:.75}
+.hero{text-align:center;padding:24px 18px}
+.heroT{font:300 52px/1.05 var(--mono);letter-spacing:-.04em;margin:6px 0;font-variant-numeric:tabular-nums}
+.bignum{margin:8px 0}.bignum b{font:300 34px var(--mono);letter-spacing:-.03em}.bignum span{color:var(--muted);font-family:var(--mono)}
+.bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin:12px 0}
+.bar i{display:block;height:100%;background:var(--sage);border-radius:3px;transition:width .4s}
+.bar.over i{background:var(--ember)}
+.pill{font:500 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);padding:5px 9px;border-radius:999px;color:var(--muted);white-space:nowrap}
+.notice{background:color-mix(in srgb,var(--ember) calc(var(--tint)*100%),var(--panel));border:1px solid color-mix(in srgb,var(--ember) 35%,var(--line));color:var(--text);border-radius:16px;padding:14px;margin:10px 0;font-size:14px}
+.notice b{color:var(--emberInk);font-family:var(--mono);font-weight:500}
+.notice.good{background:color-mix(in srgb,var(--sage) calc(var(--tint)*100%),var(--panel));border-color:color-mix(in srgb,var(--sage) 35%,var(--line))}
+.notice.good b{color:var(--sageInk)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 12.5px var(--mono);background:transparent;border:1px solid var(--line);color:var(--text);padding:9px 13px;border-radius:999px}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.scale .chip{padding:12px 0;border-radius:10px;text-align:center;justify-content:center}
+.emo{display:grid;grid-template-columns:64px repeat(5,1fr);gap:5px;align-items:center;margin:6px 0}
+.emo .chip{padding:9px 0;border-radius:10px}
+label{display:block;font:500 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}
+label.check{text-transform:none;letter-spacing:0;font:400 14px var(--sans);color:var(--text);display:flex;align-items:center}
+input,select,textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--field);color:var(--text);font:15px var(--sans)}
+input[type=checkbox]{width:auto;margin-right:10px;accent-color:var(--slate);transform:scale(1.15)}
+.stepper{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:999px;padding:4px}
+.stepper button{width:48px;height:44px;font-size:20px;padding:0}
+.stepper b{font:400 16px var(--mono)}
+.view{display:none}.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+nav{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav .in{display:flex;max-width:600px;width:100%}
+nav button{flex:1;background:none;color:var(--muted);font:500 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:8px 2px;flex-direction:column;gap:5px;border-radius:12px}
+nav button i{font-style:normal;font-size:21px;line-height:1;display:flex}
+nav button.on{color:var(--text)}
+nav button.on i{color:var(--text)}
+nav button.sos{color:var(--emberInk)}
+.sheetwrap{position:fixed;inset:0;background:#0009;display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sheetwrap[hidden]{display:none}
+.sheet{background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:10px 18px calc(22px + env(safe-area-inset-bottom));animation:up .22s ease}
+.sheet::before{content:'';display:block;width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 14px}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+#toast{position:fixed;left:50%;bottom:88px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--text);color:var(--bg);border-radius:999px;padding:10px 16px;display:flex;gap:10px;align-items:center;transition:.25s;z-index:30;max-width:92vw;font:400 13px var(--mono)}
+#toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast .link{color:var(--bg);text-decoration:underline;padding:2px 4px}
+.chart{display:flex;align-items:flex-end;gap:5px;height:130px;margin-top:12px}
+.col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}
+.col .v{width:100%;border-radius:4px 4px 1px 1px;background:var(--sage);min-height:2px}
+.col .v.over{background:var(--ember)}
+.col .v.zero{background:var(--line)}
+.col .n{font:10px var(--mono);color:var(--muted);margin-bottom:3px}
+.col .cap{position:absolute;left:-2px;right:-2px;border-top:1px dashed var(--muted)}
+.lbls{display:flex;gap:5px;margin-top:6px}.lbls span{flex:1;text-align:center;font:10px var(--mono);color:var(--muted)}
+.hb{display:grid;grid-template-columns:118px 1fr 36px;gap:10px;align-items:center;font:12.5px var(--mono);margin:8px 0}
+.hb .t{height:3px;background:var(--line);border-radius:3px;overflow:hidden}.hb .t i{display:block;height:100%;background:var(--sage)}
+.entry{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entry>div>div:first-child{font-family:var(--mono);font-size:13.5px}
+.dayhead{font:500 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:18px 0 2px}
+.breath{width:180px;height:180px;border-radius:50%;margin:16px auto;background:color-mix(in srgb,var(--sage) 14%,transparent);border:1px solid var(--sage);display:flex;align-items:center;justify-content:center;font:400 14px/1.5 var(--mono);text-align:center;transform:scale(.62);white-space:pre-line}
+ul.tidy{margin:6px 0;padding-left:18px;color:var(--muted)}ul.tidy li{margin:7px 0}
+.tel{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.tel:last-child{border-bottom:0}
+.tel a{font-family:var(--mono)}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{background:var(--panel2);border:1px solid transparent;color:var(--text);text-align:left;padding:16px 14px;border-radius:16px;font:500 14px var(--mono);flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:6px;min-height:108px}
+.tool span{font-size:22px;color:var(--mist);margin-bottom:4px}.tool small{font:400 12px var(--sans);color:var(--muted)}
+.flip{border:1px solid var(--line);border-radius:14px;padding:14px;margin:8px 0;cursor:pointer}
+.flip .q{font:500 14px var(--mono);color:var(--emberInk)}
+.flip .a{margin-top:8px;color:var(--text)}
+.ms{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.ms:last-child{border-bottom:0}
+.ms .dot{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:11px var(--mono);border:1px solid var(--line);color:var(--muted)}
+.ms .tt{font-family:var(--mono);font-weight:500}
+.ms.got .dot{background:var(--sage);color:#101015;border-color:var(--sage)}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.badge{border:1px solid var(--line);border-radius:14px;padding:14px 6px 10px;text-align:center;font:11px/1.35 var(--mono);color:var(--muted)}
+.badge span{display:block;font-size:24px;margin-bottom:6px;opacity:.35}
+.badge.got{color:var(--text);background:var(--panel2);border-color:transparent}.badge.got span{color:var(--sageInk);opacity:1}
+.lvl{display:flex;gap:14px;align-items:center}
+.lvl .e{font-size:30px;color:var(--sageInk);width:56px;height:56px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.lvl b{font-family:var(--mono);font-weight:500}
+.wave{width:100%;height:110px;display:block}
+.board{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;background:var(--panel2);padding:6px;border-radius:14px;touch-action:manipulation;user-select:none}
+.board div{aspect-ratio:1;border-radius:4px;background:var(--bg)}
+.tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.slot{border:1px solid var(--line);border-radius:14px;min-height:84px;display:flex;align-items:center;justify-content:center;padding:6px}
+.slot.sel{border-color:var(--ember);background:color-mix(in srgb,var(--ember) 10%,transparent)}
+.mini{display:grid;gap:2px}.mini div{width:13px;height:13px;border-radius:3px}
+.steps{display:flex;gap:6px;margin-bottom:14px}.steps i{flex:1;height:3px;border-radius:3px;background:var(--line)}.steps i.on{background:var(--ember)}
+
+.artbox{background:#101015;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:18px;margin:-4px -4px 14px}
+.artbox img{max-width:100%;max-height:200px;display:block}
+.art-wave{width:100%;border-radius:16px;display:block;margin:0 0 14px}
+.tb-badge{width:52px;height:52px;flex:none;border-radius:50%;background:#101015;padding:4px}
+#lvlChip{font-size:11px;letter-spacing:.08em;padding:8px 12px}
+footer{font-size:12px;color:var(--muted);line-height:1.6;margin:18px 4px}
+
+@font-face{font-family:'DM Mono';font-weight:300;font-display:swap;src:url('fonts/dm-mono-300.woff2') format('woff2')}
+@font-face{font-family:'DM Mono';font-weight:400;font-display:swap;src:url('fonts/dm-mono-400.woff2') format('woff2')}
+@font-face{font-family:'DM Mono';font-weight:500;font-display:swap;src:url('fonts/dm-mono-500.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-weight:400;font-display:swap;src:url('fonts/instrument-sans-400.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-weight:500;font-display:swap;src:url('fonts/instrument-sans-500.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-weight:600;font-display:swap;src:url('fonts/instrument-sans-600.woff2') format('woff2')}
+main{padding:14px 16px 40px}
+#hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;min-height:42px}
+.ring{position:relative;width:min(270px,78vw);aspect-ratio:1;margin:10px auto 18px}
+.ring svg{width:100%;height:100%;display:block}
+.ringIn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.ringIn .heroT{font-size:40px;margin:2px 0}
+#toast{bottom:28px}
+.chip{display:inline-flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<main>
+  <header id="hdr"></header>
+  <section id="app"></section>
+</main>
+<div id="toast" role="status"></div>
+<script>
+'use strict';
+const TIPS=['This is a craving. It rises, peaks, and falls.','Notice where you feel it in your body. Just watch it.','Breathe out longer than you breathe in.','Sip cold water slowly.',
+  'Get up and change rooms.','You don’t have to act on it. It’s just a feeling.','It’s already starting to fade.','Every craving you ride out makes the next one weaker.'];
+const DEFAULT_THOUGHTS=[
+  ['Just one won’t hurt.','One is how every session starts. Skipping this one is the only one I can control.'],
+  ['I can’t sleep without it.','Sleep is rough for the first week or two, then it gets better. This is withdrawal talking, not the truth.'],
+  ['I deserve it after today.','I deserve to feel good tomorrow too. What else would actually be a treat right now?'],
+  ['I’ll start tomorrow.','Tomorrow-me has the same cravings. Today is the only day I can actually change.'],
+  ['I can’t handle this stress sober.','The relief lasts an hour. Daily use and withdrawal keep the stress dial turned up. Every day without, it comes down.'],
+  ['Everyone around me is smoking.','I can be there and not smoke, or I can leave early. Both are fine.'],
+  ['I already messed up today, so whatever.','A slip isn’t a reset. Stopping after one is still a win.'],
+  ['I’m bored, there’s nothing else to do.','Boredom is a 10-minute problem. Pick one thing and the craving passes with it.'],
+  ['It’s not a big deal, it’s just weed.','If it wasn’t a big deal, I wouldn’t have built an app to fight it.']];
+const MILESTONES=[
+  [20/60,'20 minutes','Heart rate and blood pressure start to come down.',1],
+  [12,'12 hours','Carbon monoxide from the smoke falls back to normal levels in your blood.',1],
+  [24,'1 day','Withdrawal may begin: irritability, restlessness, low appetite. It means your brain is rebalancing.',0],
+  [48,'2 days','Nicotine is mostly out of your body. Taste and smell start to improve. Brain-scan studies show cannabinoid receptors already starting to recover.',0],
+  [72,'3 days','Breathing gets easier as your airways relax. Cravings are often strongest around now — this is the peak, not the new normal.',0],
+  [168,'1 week','For most people, cannabis withdrawal is past its worst.',0],
+  [336,'2 weeks','Most withdrawal symptoms have faded. Circulation keeps improving. Many people notice clearer thinking.',0],
+  [672,'4 weeks','In brain-scan studies, cannabinoid receptors are close to normal by about now. Sleep and dreams usually settle.',0],
+  [2160,'3 months','Lung function improves; coughing and shortness of breath usually ease.',1]];
+const ICONS={home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+sos:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/>',
+tools:'<rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><path d="M17 13.5v7M13.5 17h7"/>',
+progress:'<path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/>',
+me:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',
+wave:'<path d="M2 15c2.5 0 2.5-6 5-6s2.5 6 5 6 2.5-6 5-6 2.5 6 5 6"/>',
+blocks:'<rect x="3" y="12" width="6" height="6" rx="1"/><rect x="9" y="12" width="6" height="6" rx="1"/><rect x="9" y="6" width="6" height="6" rx="1"/><rect x="15" y="12" width="6" height="6" rx="1"/>',
+breathe:'<path d="M3 9h11a3 3 0 1 0-3-3"/><path d="M3 15h15a3 3 0 1 1-3 3"/><path d="M3 12h7"/>',
+thought:'<path d="M4 5h16v11H9l-5 4z"/><path d="M9 10.5h6"/>',
+forward:'<path d="M4 6l7 6-7 6zM13 6l7 6-7 6z"/>',
+headphones:'<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
+hand:'<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7 6 6 0 0 1-5-3l-2.3-3.8a1.5 1.5 0 0 1 2.5-1.7L8 15"/>',
+branch:'<circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M6 7v1a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4V7M12 12v5"/>',
+heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/><path d="M8 11h2l1-2 2 4 1-2h2"/>',
+notob:'<rect x="3" y="13" width="15" height="4" rx="1"/><path d="M14 13v4M20 7c0 2-2 2-2 4M3 3l18 18"/>',
+moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+jar:'<path d="M8 3h8M9 3v3L6 9v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9l-3-3V3"/><path d="M6 13h12"/>',
+target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+alert:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',
+hourglass:'<path d="M6 3h12M6 21h12M7 3v2a5 5 0 0 0 5 5 5 5 0 0 1 5 5v6M17 3v2a5 5 0 0 1-5 5 5 5 0 0 0-5 5v6"/>',
+mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+bong:'<path d="M9 3h5M10 3v8l-4 4.5A3.5 3.5 0 0 0 9 21h5a3.5 3.5 0 0 0 3-5.5l-2-2.5M13 3v6M15 10l4-3.5"/>',
+joint:'<path d="M3 18l13-8 2.5 3L5 21z"/><path d="M19 9c1-1 1-2.5 0-3.5M21.5 8c1-2 .5-4-1-5.5"/>',
+bowl:'<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8.5 8c0-2 2-2 2-4M13.5 8c0-2 2-2 2-4"/>',
+bolt:'<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.5a5 5 0 0 1 5 5"/>',
+leaf:'<path d="M5 19C5 10 11 5 20 5c0 9-5 15-14 15"/><path d="M5 19l8-8"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+flame:'<path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-4-11-2 2-3 4-3 6-1-1-1.5-2-2-3-2 2-3 4.5-3 8a6 6 0 0 0 6 6z"/>',
+medal:'<circle cx="12" cy="15" r="5"/><path d="M8 3l2 7M16 3l-2 7M8 3h8"/>',
+trophy:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 21h8"/>',
+calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+coin:'<circle cx="12" cy="12" r="9"/><path d="M15 9c-.5-1-1.6-1.6-3-1.6-1.7 0-3 .8-3 2.1 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3-1.6M12 5.8v1.6M12 16.6v1.6"/>',
+fortress:'<path d="M4 21V9h3V6h3v3h4V6h3v3h3v12z"/><path d="M10 21v-5h4v5"/>',
+check:'<path d="M5 12.5l4.5 4.5L19 7"/>'};
+const EMO={'🛟':'sos','🌊':'wave','🧩':'blocks','🫁':'breathe','🧠':'thought','⏩':'forward','🎧':'headphones','📞':'phone','✋':'hand','🔀':'branch',
+ '❤️':'heart','🚭':'notob','🌙':'moon','🏺':'jar','🎯':'target','⚠️':'alert','⏳':'hourglass','🎙️':'mic','💪':'shield','💨':'bong','🚬':'joint',
+ '🍽️':'bowl','😤':'bolt','🫂':'users','😴':'moon','🛡️':'shield','🏰':'fortress','☀️':'sun','🔥':'flame','🏅':'medal','🏆':'trophy','📅':'calendar',
+ '💰':'coin','🌰':'leaf','🌱':'leaf','🌿':'leaf','🪴':'leaf','🌳':'leaf','🌲':'leaf','🏞️':'leaf'};
+const EMO_KEYS=Object.keys(EMO).sort((a,b)=>b.length-a.length);
+const STRIP=/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2B50}\u{23E9}-\u{23FA}\u{FE0F}\u{270B}\u{2764}]/gu;
+function ic(name){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('class','ic');
+  s.setAttribute('aria-hidden','true');s.innerHTML=ICONS[name]||'';return s}
+function emo(t){
+  if(typeof t!=='string')return [t];
+  const k=EMO_KEYS.find(x=>t.startsWith(x));let rest=k?t.slice(k.length):t;
+  rest=rest.replace(/✔/g,'✓');const had=rest.search(STRIP)>=0;rest=rest.replace(STRIP,'');if(had)rest=rest.replace(/\s+$/,'');
+  return k?[ic(EMO[k]),rest]:[rest];
+}
+const $=id=>document.getElementById(id);
+function h(tag,props,...kids){
+  const e=document.createElement(tag);
+  if(props)for(const k in props){const v=props[k];if(v==null||v===false)continue;
+    if(k==='textContent'&&typeof v==='string'){e.append(...emo(v).filter(x=>x!==''));continue}
+    if(k==='class')e.className=v;else if(k==='style')e.style.cssText=v;
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);
+    else if(k in e)e[k]=v;else e.setAttribute(k,v);}
+  kids.flat(9).forEach(c=>{if(c!=null&&c!==false)e.append(...emo(c).filter(x=>x!==''))});
+  return e;
+}
+const fill=(el,...k)=>{el.replaceChildren();k.flat(9).forEach(c=>{if(c!=null&&c!==false)el.append(c)});return el};
+const card=(...k)=>h('div',{class:'card'},...k);
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2);
+const isUse=r=>r.type==='bong'||r.type==='joint';
+const fmtN=n=>String(Number((+n).toFixed(1)));
+const money=n=>S.currency+Math.round(n).toLocaleString();
+const clock=d=>d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+const mmss=ms=>{ms=Math.max(0,ms);return `${Math.floor(ms/6e4)}:${String(Math.floor(ms%6e4/1e3)).padStart(2,'0')}`};
+function dur(ms){ms=Math.max(0,ms);const d=Math.floor(ms/864e5),hh=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);
+  if(d)return `${d}d ${hh}h`;if(hh)return `${hh}h ${m}m`;return `${m}m`}
+function localInput(d=new Date()){const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+function dIdx(d){const s=new Date(d.getTime()-S.dayStart*36e5);return Math.round(Date.UTC(s.getFullYear(),s.getMonth(),s.getDate())/864e5)}
+const today=()=>dIdx(new Date());
+const idxLabel=(i,o)=>new Date(i*864e5).toLocaleDateString([], {timeZone:'UTC',...o});
+const costOf=r=>r.amount*(r.type==='bong'?+S.costBong||0:+S.costJoint||0);
+const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+function idb(){return new Promise((res,rej)=>{const q=indexedDB.open('clearmind',1);q.onupgradeneeded=()=>q.result.createObjectStore('blobs');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function blobGet(k){const db=await idb();return new Promise((res,rej)=>{const q=db.transaction('blobs').objectStore('blobs').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)})}
+async function blobSet(k,v){const db=await idb();return new Promise((res,rej)=>{const tx=db.transaction('blobs','readwrite');const st=tx.objectStore('blobs');v==null?st.delete(k):st.put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+const wf=x=>x<0.3?0.25+0.7*Math.sin(x/0.3*Math.PI/2):0.12+0.83*Math.exp(-(((x-0.3)/0.3)**2));
+/* --- Blocks: visuospatial puzzle --- */
+const SH=[[[0,0]],[[0,0],[1,0]],[[0,0],[0,1]],[[0,0],[1,0],[2,0]],[[0,0],[0,1],[0,2]],[[0,0],[1,0],[0,1],[1,1]],
+  [[0,0],[0,1],[1,1]],[[1,0],[0,1],[1,1]],[[0,0],[1,0],[0,1]],[[0,0],[1,0],[1,1]],[[0,0],[1,0],[2,0],[3,0]],[[0,0],[0,1],[0,2],[0,3]],
+  [[0,0],[0,1],[0,2],[1,2],[2,2]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]]];
+const COL=['#8FA58A','#C9925E','#8EA0C2','#B5776E','#A99BC4','#7FA9A6','#D3BC74'];
+function newPiece(){const s=Math.floor(Math.random()*SH.length);return {cells:SH[s],c:1+s%COL.length}}
+function newGame(){G={grid:Array(64).fill(0),pieces:[newPiece(),newPiece(),newPiece()],sel:0,score:0,over:false,t0:Date.now()};
+  try{G.best=+localStorage.getItem('clearmind-best')||0}catch(e){G.best=0}}
+const fits=(p,ax,ay)=>p.cells.every(([x,y])=>{const X=ax+x,Y=ay+y;return X>=0&&X<8&&Y>=0&&Y<8&&!G.grid[Y*8+X]});
+function anyFit(){return G.pieces.some(p=>p&&[...Array(64)].some((_,i)=>fits(p,i%8,Math.floor(i/8))))}
+function tryPlace(cx,cy){
+  const p=G.pieces[G.sel];if(!p)return false;
+  const mx=Math.max(...p.cells.map(c=>c[0]))/2,my=Math.max(...p.cells.map(c=>c[1]))/2;
+  const order=[...p.cells].sort((a,b)=>Math.hypot(a[0]-mx,a[1]-my)-Math.hypot(b[0]-mx,b[1]-my));
+  for(const [x,y] of order){const ax=cx-x,ay=cy-y;if(fits(p,ax,ay)){
+    p.cells.forEach(([px,py])=>G.grid[(ay+py)*8+ax+px]=p.c);G.score+=p.cells.length;
+    const rows=[],cols=[];for(let i=0;i<8;i++){if([...Array(8)].every((_,j)=>G.grid[i*8+j]))rows.push(i);if([...Array(8)].every((_,j)=>G.grid[j*8+i]))cols.push(i)}
+    rows.forEach(r=>{for(let j=0;j<8;j++)G.grid[r*8+j]=0});cols.forEach(c=>{for(let j=0;j<8;j++)G.grid[j*8+c]=0});
+    const ln=rows.length+cols.length;G.score+=ln*10*ln;
+    G.pieces[G.sel]=null;if(G.pieces.every(x=>!x))G.pieces=[newPiece(),newPiece(),newPiece()];
+    G.sel=G.pieces.findIndex(Boolean);
+    if(!anyFit()){G.over=true;if(G.score>G.best){G.best=G.score;try{localStorage.setItem('clearmind-best',G.best)}catch(e){}}}
+    return true}}
+  return false;
+}
+function tGame(box,inSOS){
+  if(!G||G.over)newGame();if(inSOS)G.t0=Date.now();
+  const wrap=h('div');
+  box.append(card(h('div',{class:'row between'},h('h2',{style:'margin:0',textContent:'🧩 Blocks'}),h('span',{class:'pill',id:'gT'})),
+    h('p',{class:'small',textContent:'Pick a piece below, then tap the board to drop it. Fill a full row or column to clear it. A few minutes of a visual puzzle like this has been shown to weaken cravings — it uses the same mental "space" the craving does.'}),wrap));
+  function draw(){
+    const board=h('div',{class:'board'});
+    G.grid.forEach((c,i)=>board.append(h('div',{style:c?`background:${COL[c-1]}`:'',onclick:()=>{if(G.over)return;if(tryPlace(i%8,Math.floor(i/8)))draw();else toast('Doesn’t fit there.')}})));
+    const tray=h('div',{class:'tray'});
+    G.pieces.forEach((p,k)=>{const s=h('div',{class:'slot'+(k===G.sel&&p?' sel':''),onclick:()=>{if(p){G.sel=k;draw()}}});
+      if(p){const w=Math.max(...p.cells.map(c=>c[0]))+1,hh=Math.max(...p.cells.map(c=>c[1]))+1;
+        const mini=h('div',{class:'mini',style:`grid-template-columns:repeat(${w},13px)`});
+        for(let y=0;y<hh;y++)for(let x=0;x<w;x++)mini.append(h('div',{style:p.cells.some(c=>c[0]===x&&c[1]===y)?`background:${COL[p.c-1]}`:''}));s.append(mini)}
+      tray.append(s)});
+    fill(wrap,h('div',{class:'row between',style:'margin:8px 0'},h('b',{textContent:`Score ${G.score}`}),h('span',{class:'small',textContent:`Best ${G.best}`})),board,tray,
+      G.over?h('div',{class:'notice good',style:'text-align:center'},h('b',{textContent:'No moves left. '}),`Score ${G.score}. `,h('button',{class:'sm',textContent:'Play again',onclick:()=>{newGame();draw()}})):null);
+  }
+  draw();
+  ticker=()=>{const e=Date.now()-G.t0,el=$('gT');if(el)el.textContent=inSOS?(e<18e4?`Play ${mmss(18e4-e)} more`:'3 min done ✔'):mmss(e)};ticker();
+}
+
+/* --- Breathing --- */
+function tBreathe(box){
+  const c=h('div',{class:'breath',textContent:'Tap start'});
+  const b=h('button',{class:'ghost',textContent:breath.on?'Stop':'Start breathing',onclick:()=>{breath.on=!breath.on;breath.t0=Date.now();b.textContent=breath.on?'Stop':'Start breathing'}});
+  box.append(h('div',{class:'card',style:'text-align:center'},h('h2',{textContent:'🫁 Slow breathing'}),
+    h('p',{textContent:'In for 4, hold for 4, out for 6. A long out-breath tells your body it’s safe and turns the urgency down.'}),c,b));
+  let ph='';
+  ticker=()=>{if(!breath.on){if(ph!=='off'){ph='off';c.style.transition='transform 1s';c.style.transform='scale(.62)';c.textContent='Tap start'}return}
+    const e=(Date.now()-breath.t0)%14000;let p,lab,left;
+    if(e<4000){p='in';lab='Breathe in';left=4000-e}else if(e<8000){p='hold';lab='Hold';left=8000-e}else{p='out';lab='Breathe out';left=14000-e}
+    if(p!==ph){ph=p;if(p==='in'){c.style.transition='transform 4s ease-in-out';c.style.transform='scale(1)'}if(p==='out'){c.style.transition='transform 6s ease-in-out';c.style.transform='scale(.62)'}}
+    c.textContent=`${lab}\n${Math.ceil(left/1000)}`};
+  ticker();
+}
+
+/* --- Thought buster --- */
+function tThoughts(box){
+  const list=[...DEFAULT_THOUGHTS.map(x=>({q:x[0],a:x[1]})),...S.thoughts.map((x,i)=>({q:x.q,a:x.a,own:i}))];
+  const nq=h('input',{placeholder:'The thought, e.g. "I need it to be creative"',maxLength:120}),na=h('textarea',{rows:2,maxLength:300,placeholder:'Your comeback'});
+  box.append(card(h('h2',{textContent:'🧠 Thought buster'}),
+    h('p',{textContent:'Cravings argue with you. These are the most common arguments. Tap one you’re hearing right now to see the comeback.'}),
+    list.map(x=>{const a=h('div',{class:'a',textContent:x.a,hidden:true});
+      return h('div',{class:'flip',onclick:()=>a.hidden=!a.hidden},h('div',{class:'q',textContent:`"${x.q}"`}),a,
+        x.own!=null?h('button',{class:'link sm',textContent:'Remove',onclick:e=>{e.stopPropagation();S.thoughts.splice(x.own,1);persist()}}):null)})),
+    card(h('h2',{textContent:'Add your own'}),h('p',{class:'small',textContent:'The excuses your mind uses are personal. Write the comeback while you’re calm.'}),nq,h('div',{style:'height:8px'}),na,
+      h('button',{class:'wide mt',textContent:'Add',onclick:()=>{if(!nq.value.trim()||!na.value.trim()){toast('Fill in both.');return}
+        S.thoughts.push({q:nq.value.trim(),a:na.value.trim()});persist();toast('Added.')}})));
+}
+
+/* --- Play it forward --- */
+function tTape(box){
+  const steps=[
+    ['Picture smoking right now.','The first few minutes feel like relief. Be honest — how long does that part actually last?'],
+    ['Now 2 hours later.','Where are you? Are you on the couch, foggy, wanting another one? Did you do the thing you meant to do today?'],
+    ['Tomorrow morning.','How do you wake up? Chest, head, energy, mood. Do you feel proud of last night?'],
+    ['Now picture NOT smoking.','The next 15 minutes are uncomfortable. Then the craving fades.'],
+    ['Tomorrow morning, again.','You wake up clearer. You kept a promise to yourself. Your next craving will be a bit weaker.']];
+  let i=0;const body=h('div');
+  function draw(){fill(body,h('p',{class:'small',textContent:`${i+1} / ${steps.length+1}`}),
+    i<steps.length?[h('h2',{style:'font-size:19px',textContent:steps[i][0]}),h('p',{class:'white',style:'font-size:16px',textContent:steps[i][1]}),
+      h('button',{class:'wide mt',textContent:'Next →',onclick:()=>{i++;draw()}})]:
+      [h('h2',{style:'font-size:19px',textContent:'Which ending do you want?'}),
+       S.reasons.length?h('ul',{class:'tidy white'},S.reasons.map(r=>h('li',{textContent:r}))):h('p',{textContent:'Add your reasons under More → My deal.'}),
+       h('button',{class:'ghost wide mt',textContent:'Start again',onclick:()=>{i=0;draw()}})])}
+  draw();
+  box.append(card(h('h2',{textContent:'⏩ Play it forward'}),h('p',{textContent:'A craving only shows you the first 5 minutes. Watch the whole movie.'}),body));
+}
+
+/* --- Message from me: voice + letter --- */
+function tVoice(box,inSOS){
+  const audioBox=h('div'),letter=h('textarea',{rows:5,maxLength:2000,value:S.letter,placeholder:'Write to yourself during a craving. What do you know now, when you’re calm, that you forget when the urge hits?'});
+  box.append(card(h('h2',{textContent:'🎧 Message from me'}),
+    h('p',{textContent:'A message in your own voice, recorded on a good day, is hard to argue with. Play it when a craving hits.'}),audioBox),
+    inSOS&&S.letter?card(h('h2',{textContent:'Your letter'}),h('p',{class:'white',style:'white-space:pre-wrap;font-size:16px',textContent:S.letter})):
+    card(h('h2',{textContent:'Letter to my craving self'}),letter,h('button',{class:'wide mt',textContent:'Save letter',onclick:()=>{S.letter=letter.value.trim();persist();toast('Letter saved.')}})));
+  let rec=null,chunks=[],url=null;
+  async function drawAudio(){
+    fill(audioBox,);
+    if(S.hasVoice){
+      try{const b=await blobGet('voice');if(b){url&&URL.revokeObjectURL(url);url=URL.createObjectURL(b);
+        audioBox.append(h('audio',{controls:true,src:url,style:'width:100%;margin:8px 0'}))}else{S.hasVoice=false;save()}}catch(e){}
+    }
+    if(inSOS&&S.hasVoice)return;
+    if(!navigator.mediaDevices||!window.MediaRecorder){audioBox.append(h('p',{class:'small',textContent:'Voice recording isn’t supported in this browser.'}));return}
+    audioBox.append(h('div',{class:'grid2 mt'},
+      h('button',{textContent:S.hasVoice?'🎙️ Record again':'🎙️ Record (up to 2 min)',onclick:startRec}),
+      S.hasVoice?h('button',{class:'ghost',textContent:'Delete',onclick:async()=>{if(confirm('Delete your voice message?')){await blobSet('voice',null);S.hasVoice=false;persist()}}}):null),
+      h('p',{class:'small',textContent:'Ideas: why you’re doing this, how you felt on your best day, what you’d tell a friend in your shoes.'}));
+  }
+  async function startRec(){
+    try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream);chunks=[];
+      rec.ondataavailable=e=>chunks.push(e.data);
+      rec.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const b=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
+        try{await blobSet('voice',b);S.hasVoice=true;save();toast('Voice message saved.')}catch(e){toast('Couldn’t save the recording.')}drawAudio()};
+      rec.start();const t0=Date.now();const lab=h('b',{textContent:'● Recording 0:00',style:'color:var(--red)'});
+      fill(audioBox,lab,h('button',{class:'wide mt',textContent:'Stop & save',onclick:()=>rec.state!=='inactive'&&rec.stop()}));
+      const iv=setInterval(()=>{if(rec.state==='inactive'){clearInterval(iv);return}const e=Date.now()-t0;lab.textContent='● Recording '+mmss(e);if(e>12e4)rec.stop()},250);
+    }catch(e){toast('Microphone permission was blocked.')}
+  }
+  drawAudio();
+}
+
+/* --- Body recovery --- */
+function tBody(box){
+  const lu=lastUse(),hrs=lu?(Date.now()-lu)/36e5:0;
+  box.append(card(h('h2',{textContent:'❤️ Body recovery'}),
+    h('p',{textContent:lu?`It’s been ${dur(Date.now()-lu)} since your last session. Here’s what that time is doing for you.`:'Log a session and this timeline starts from your last one.'}),
+    MILESTONES.map(([hr,lab,txt,tob])=>h('div',{class:'ms'+(lu&&hrs>=hr?' got':'')},h('div',{class:'dot',textContent:lu&&hrs>=hr?'✓':''}),
+      h('div',{},h('b',{class:'tt',textContent:lab}),tob?h('span',{class:'small',textContent:' · smoke & tobacco'}):null,h('p',{style:'margin:2px 0',textContent:txt})))),
+    h('p',{class:'small mt',textContent:'Timings are typical, based on health-service guidance and research. Everyone is different. Any session resets the clock — but it never resets what you’ve learned.'})));
+}
+
+/* --- Sleep --- */
+function tSleep(box){
+  box.append(card(h('h2',{textContent:'🌙 Sleeping without it'}),
+    h('p',{textContent:'Bad sleep and vivid dreams are the most common reason people go back. It’s temporary — usually worst in the first 1–2 weeks, and settling within about a month.'}),
+    h('ul',{class:'tidy'},['Get up at the same time every day, even after a bad night.','Get daylight in the morning and move your body during the day.',
+      'No tea, coffee or energy drinks after about 2 pm.','Warm shower and dim lights an hour before bed. Phone across the room.',
+      'Can’t sleep after 20 minutes? Get up, do something boring in dim light, go back when sleepy.','Vivid dreams are normal — your brain is catching up on REM sleep it was missing.',
+      'Avoid long daytime naps.','If you’re still not sleeping after a couple of weeks, a doctor can help.'].map(x=>h('li',{textContent:x})))));
+}
+
+
+/* =========================================================
+   ClearMind 4 — T-break companion (Android shell + this UI)
+   One screen, one button. Everything stays on this phone.
+   ========================================================= */
+const clone=x=>JSON.parse(JSON.stringify(x));
+const KEY='clearmind-v4';
+const DEF={v:4,onboarded:false,name:'',tb:{start:0,days:21,open:false,ended:false},lastUse:0,reasons:[],risk:[],
+  person:{name:'',phone:'',updates:true},prep:{},spend:0,currency:'₹',slips:[],wins:[],checks:{},ifthen:{},thoughts:[],
+  letter:'',hasVoice:false,theme:'dark',dayStart:0,crave:null};
+const TRIGGERS=['Stress','Boredom','Friends','Just woke up','After food','Before sleep','With chai / coffee','Low mood','Habit','Other'];
+const RISK_SLOTS=[['08:00','Wake-up'],['11:00','Late morning'],['15:00','Afternoon'],['18:00','After work'],['21:00','After dinner'],['23:30','Before bed']];
+const WHY=['Sleep properly','Save money','Clear head','Breathe easier','Prove I can','Be present with people','Get my drive back'];
+const PREP=[['gear','Bong, grinder, papers packed away or given to someone'],['tobacco','No tobacco or cigarettes in the room'],
+  ['stash','Stash handed to a friend, sealed, or gone'],['told','I told my person I’m doing this'],
+  ['supplies','Water, snacks and gum within reach'],['nrt','(Optional) nicotine gum or patches from a chemist']];
+ICONS.back='<path d="M15 5l-7 7 7 7"/>';ICONS.send='<path d="M4 12l16-8-6 16-3-7z"/>';ICONS.dots='<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>';
+let S=clone(DEF),screen='home',sub=null,ob={step:0},craveTool=null,ticker=null,breath={on:false,t0:0},G=null,slip=null;
+
+/* ---------- native bridge (no-ops in a plain browser) ---------- */
+const NA=window.Android||null;
+const native={
+  sync(){if(!NA)return;try{NA.sync(JSON.stringify({onboarded:S.onboarded,name:S.name,lastUse:S.lastUse,tbStart:S.tb.start,tbDays:S.tb.days,
+    tbOpen:!!S.tb.open,tbEnded:!!S.tb.ended,risk:S.risk,personName:S.person.name,personUpdates:!!(S.person.updates&&S.person.phone),
+    cleanDays:cleanDays(),wins:S.wins.length,reason:S.reasons[0]||''}))}catch(e){}},
+  craveStart(end){if(NA)try{NA.craveStart(String(end))}catch(e){}},
+  craveCancel(){if(NA)try{NA.craveCancel()}catch(e){}},
+  pull(){if(!NA)return [];try{return JSON.parse(NA.pull()||'[]')}catch(e){return []}},
+  whatsapp(phone,text){if(NA)NA.whatsapp(phone,text);else open('https://wa.me/'+phone+'?text='+encodeURIComponent(text),'_blank')},
+  share(text){if(NA)NA.share(text);else if(navigator.share)navigator.share({text}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(text);toast('Copied.')}},
+  dial(n){if(NA)NA.dial(n);else location.href='tel:'+n},
+  askNotify(){if(NA)try{NA.askNotify()}catch(e){}},
+  askMic(){if(NA)try{NA.askMic()}catch(e){}}
+};
+
+/* ---------- storage ---------- */
+function load(){
+  let x={};try{x=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+  S={...clone(DEF),...x};
+  S.tb={...DEF.tb,...(x.tb||{})};S.person={...DEF.person,...(x.person||{})};
+  for(const k of ['prep','checks','ifthen'])if(!S[k]||typeof S[k]!=='object'||Array.isArray(S[k]))S[k]={};
+  for(const k of ['reasons','risk','slips','wins','thoughts'])if(!Array.isArray(S[k]))S[k]=[];
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Could not save — storage is full.')}native.sync()}
+function persist(){save();render()}
+const lastUse=()=>S.lastUse?new Date(S.lastUse):null;
+
+/* ---------- T-break maths ---------- */
+const DAY=864e5;
+const started=()=>S.tb.start&&Date.now()>=S.tb.start;
+const tbDay=()=>started()?Math.floor((Date.now()-S.tb.start)/DAY)+1:0;
+const tbDone=()=>!S.tb.open&&tbDay()>S.tb.days;
+const freeDate=()=>new Date(S.tb.start+S.tb.days*DAY);
+function slipDays(){const s=new Set();for(const x of S.slips)if(x.when>=S.tb.start)s.add(Math.floor((x.when-S.tb.start)/DAY));return s.size}
+function cleanDays(){if(!started())return 0;const d=S.tb.open?tbDay():Math.min(tbDay(),S.tb.days);return Math.max(0,d-slipDays())}
+const savedMoney=()=>S.spend>0?S.spend*cleanDays():null;
+const digits=()=>{let d=(S.person.phone||'').replace(/\D/g,'');if(d.length===10)d='91'+d;return d};
+const who=()=>S.person.name||'my person';
+const fmtDate=d=>d.toLocaleDateString([], {weekday:'short',day:'numeric',month:'short'});
+
+/* ---------- toast / nav ---------- */
+function toast(msg){const t=$('toast');fill(t,h('span',{textContent:msg}));t.classList.add('on');clearTimeout(toast.tm);toast.tm=setTimeout(()=>t.classList.remove('on'),3800)}
+function go(s,o={}){screen=s;sub=o.sub||null;craveTool=null;breath.on=false;render();scrollTo(0,0)}
+window.onBack=()=>{if(screen==='home'||screen==='onboard'||screen==='crave')return false;if(sub){go(screen);return true}go('home');return true};
+function applyTheme(){const r=document.documentElement;if(S.theme==='light')r.dataset.theme='light';else r.dataset.theme='dark'}
+function render(){
+  ticker=null;applyTheme();
+  if(!S.onboarded)screen='onboard';
+  else if(S.crave&&screen==='home')screen='crave';
+  const hd=$('hdr');
+  if(screen==='home'||screen==='onboard')fill(hd,h('h1',{},ic('leaf'),'clearmind'),screen==='home'?h('button',{class:'ghost sm',ariaLabel:'More',onclick:()=>go('more')},ic('dots')):null);
+  else if(screen==='crave')fill(hd,h('h1',{},ic('leaf'),'clearmind'),h('span',{class:'pill',style:'color:var(--emberInk);border-color:var(--emberInk)',textContent:'Round '+((S.crave&&S.crave.round)||1)}));
+  else fill(hd,h('button',{class:'ghost sm',onclick:()=>window.onBack()},ic('back'),'Back'),h('span'));
+  ({onboard:rOnboard,home:rHome,crave:rCrave,won:rWon,smoke:rSmoke,slip:rSlip,slipped:rSlipped,more:rMore})[screen]();
+}
+
+/* =========================================================
+   ONBOARDING — the deal
+   ========================================================= */
+function rOnboard(){
+  const v=$('app');const st=ob.step,total=7;
+  const bar=h('div',{class:'steps'},[...Array(total)].map((_,i)=>h('i',{class:i<=st?'on':''})));
+  const next=(label='Next',ok=()=>true)=>h('button',{class:'wide',style:'margin-top:18px',textContent:label,onclick:()=>{if(ok()!==false){ob.step++;save();render();scrollTo(0,0)}}});
+  const back=()=>st>0?h('button',{class:'link wide mt',textContent:'Back',onclick:()=>{ob.step--;render()}}):null;
+  if(st===0)fill(v,bar,card(h('div',{class:'artbox'},h('img',{src:'img/art-calm.png',alt:''})),
+    h('h2',{style:'font-size:20px',textContent:'This isn’t a tracker. It’s a deal with yourself.'}),
+    h('p',{textContent:'A T-break: zero weed, zero tobacco mixes, for a set number of days. Long enough to get past withdrawal and see how you actually feel without it.'}),
+    h('p',{textContent:'ClearMind will check on you, warn you before your risky hours, and give you one button to press when you want to smoke. Setup takes two minutes.'}),
+    h('label',{textContent:'What should I call you?'}),h('input',{value:S.name,maxLength:30,placeholder:'Your name',oninput:e=>S.name=e.target.value.trim()}),
+    next('Let’s do it',()=>{if(!S.name){toast('Add your name first.');return false}})));
+  else if(st===1){
+    const chips=h('div',{class:'chips'},[[7,'7 days'],[14,'14 days'],[21,'21 days'],[30,'30 days']].map(([d,l])=>h('button',{class:'chip'+(S.tb.days===d?' on':''),textContent:l,onclick:()=>{S.tb.days=d;render()}})));
+    if(!ob.when)ob.when='now';if(!ob.last)ob.last='hours';
+    fill(v,bar,card(h('h2',{textContent:'How long?'}),chips,
+      h('p',{class:'small mt',textContent:S.tb.days<14?'A short break still counts. Withdrawal peaks in the first week, so this will be the hard part with less of the payoff.':'Good choice. The first week is the hardest; after two weeks most withdrawal has faded, and sleep and head start to clear.'}),
+      h('label',{textContent:'When does it start?'}),
+      h('div',{class:'chips'},[['now','Right now'],['morning','Tomorrow morning']].map(([k,l])=>h('button',{class:'chip'+(ob.when===k?' on':''),textContent:l,onclick:()=>{ob.when=k;render()}}))),
+      h('label',{textContent:'When did you last smoke?'}),
+      h('div',{class:'chips'},[['now','Just now'],['hours','A few hours ago'],['yesterday','Yesterday'],['longer','Longer ago']].map(([k,l])=>h('button',{class:'chip'+(ob.last===k?' on':''),textContent:l,onclick:()=>{ob.last=k;render()}}))),
+      h('label',{textContent:'Roughly what do you spend on it per day? (optional)'}),
+      h('input',{type:'number',inputMode:'numeric',min:0,value:S.spend||'',placeholder:'₹ per day',oninput:e=>S.spend=Math.max(0,parseFloat(e.target.value)||0)}),
+      next(),back()));
+  }
+  else if(st===2){
+    const ta=h('textarea',{rows:3,maxLength:400,value:S.reasons.join('\n'),placeholder:'In your own words. One per line.',oninput:e=>S.reasons=e.target.value.split('\n').map(x=>x.trim()).filter(Boolean)});
+    fill(v,bar,card(h('h2',{textContent:'Why are you doing this?'}),
+      h('p',{textContent:'You’ll see these when a craving hits, so write what would actually stop you.'}),
+      h('div',{class:'chips'},WHY.map(w=>h('button',{class:'chip'+(S.reasons.includes(w)?' on':''),textContent:w,onclick:()=>{S.reasons=S.reasons.includes(w)?S.reasons.filter(x=>x!==w):[...S.reasons,w];render()}}))),
+      h('div',{style:'height:10px'}),ta,next('Next',()=>{if(!S.reasons.length){toast('Pick or write at least one.');return false}}),back()));
+  }
+  else if(st===3)fill(v,bar,card(h('h2',{textContent:'When do you usually smoke?'}),
+    h('p',{textContent:'ClearMind will message you a few minutes before each of these, so the craving doesn’t catch you off guard.'}),
+    h('div',{class:'chips'},RISK_SLOTS.map(([t,l])=>h('button',{class:'chip'+(S.risk.includes(t)?' on':''),textContent:`${l} · ${t}`,onclick:()=>{S.risk=S.risk.includes(t)?S.risk.filter(x=>x!==t):[...S.risk,t].sort();render()}}))),
+    next('Next',()=>{if(!S.risk.length){toast('Pick at least one.');return false}}),back()));
+  else if(st===4){
+    const nb=next(S.person.phone?'Next':'Skip for now');
+    const msg=`Hey, I’m starting a ${S.tb.days}-day break from weed. I’m using an app that will send you my progress every Sunday. If I ever message you "craving", just talk to me for 5 minutes. That’s all I need.`;
+    fill(v,bar,card(h('h2',{textContent:'Who’s in your corner?'}),
+      h('p',{textContent:'One person who knows. People who tell someone are far more likely to stick with it. They don’t need to do anything except hear from you.'}),
+      h('label',{textContent:'Their name'}),h('input',{value:S.person.name,maxLength:30,oninput:e=>S.person.name=e.target.value.trim()}),
+      h('label',{textContent:'Their WhatsApp number'}),h('input',{type:'tel',value:S.person.phone,maxLength:20,placeholder:'e.g. 98765 43210',oninput:e=>{S.person.phone=e.target.value.trim();nb.textContent=S.person.phone?'Next':'Skip for now'}}),
+      h('label',{class:'check',style:'margin-top:14px'},h('input',{type:'checkbox',checked:S.person.updates,onchange:e=>S.person.updates=e.target.checked}),'Remind me every Sunday to send them an update'),
+      h('button',{class:'ghost wide mt',onclick:()=>{if(!digits()){toast('Add their number first.');return}native.whatsapp(digits(),msg);S.prep.told=true;save()}},ic('send'),'Tell them now on WhatsApp'),
+      nb,back()));
+  }
+  else if(st===5)fill(v,bar,card(h('h2',{textContent:'Clear the room'}),
+    h('p',{textContent:'Willpower runs out. A room with nothing to smoke doesn’t. Do as many as you can right now.'}),
+    PREP.map(([k,l])=>h('label',{class:'check',style:'margin:12px 0'},h('input',{type:'checkbox',checked:!!S.prep[k],onchange:e=>{S.prep[k]=e.target.checked;save()}}),l)),
+    h('p',{class:'small',textContent:'Mixing tobacco means nicotine withdrawal too. Gum or a patch takes the edge off the first week; a pharmacist can tell you the right strength.'}),
+    next(),back()));
+  else{
+    const start=ob.when==='morning'?(()=>{const d=new Date();d.setDate(d.getDate()+1);d.setHours(7,0,0,0);return d.getTime()})():Date.now();
+    const end=new Date(start+S.tb.days*DAY);
+    const sig=h('input',{maxLength:30,placeholder:'Type your name to sign'});
+    fill(v,bar,card(h('div',{class:'label',textContent:'The deal'}),
+      h('p',{class:'white',style:'font:400 17px/1.5 var(--mono);margin:12px 0',textContent:`I, ${S.name}, am taking a T-break for ${S.tb.days} days. No weed, no tobacco mixes, until ${fmtDate(end)}.`}),
+      h('p',{textContent:'If I want to smoke, I press the button and give it 10 minutes first. If I slip, I log it and keep going.'}),
+      sig,
+      h('button',{class:'amber wide',style:'margin-top:16px',textContent:ob.when==='morning'?'Sign. Starts tomorrow 7:00':'Sign and start now',onclick:()=>{
+        if(sig.value.trim().toLowerCase()!==S.name.toLowerCase()){toast('Type your name exactly to sign.');return}
+        const now=Date.now();S.tb={start,days:S.tb.days,open:false,ended:false};
+        S.lastUse=ob.last==='now'?now:ob.last==='hours'?now-4*36e5:ob.last==='yesterday'?now-20*36e5:now-3*DAY;
+        S.onboarded=true;screen='home';native.askNotify();persist();toast('Deal signed. I’ve got your back.')}}),back()));
+  }
+}
+
+/* =========================================================
+   HOME — the clock and the button
+   ========================================================= */
+function rHome(){
+  const v=$('app'),now=Date.now(),day=tbDay(),N=S.tb.days,lu=lastUse();
+  const prog=!started()?0:S.tb.open?1:Math.min(1,(now-S.tb.start)/(N*DAY));
+  const R=118,C=2*Math.PI*R;
+  const ring=h('div',{class:'ring'});
+  ring.innerHTML=`<svg viewBox="0 0 260 260" aria-hidden="true"><circle cx="130" cy="130" r="${R}" fill="none" stroke="var(--line)" stroke-width="4"/><circle id="ringP" cx="130" cy="130" r="${R}" fill="none" stroke="var(--sage)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-prog)}" transform="rotate(-90 130 130)"/></svg>`;
+  ring.append(h('div',{class:'ringIn'},h('div',{class:'label',textContent:'Clean for'}),h('div',{class:'heroT',id:'heroT',textContent:lu?dur(now-lu):'—'}),
+    h('div',{class:'small',id:'daySub',textContent:!started()?`T-break starts ${fmtDate(new Date(S.tb.start))} 7:00`:S.tb.ended?'Break finished':S.tb.open?`Day ${day} · no end date`:tbDone()?`${N} days done`:`Day ${day} of ${N}`})));
+  const kids=[ring];
+
+  if(tbDone()&&!S.tb.ended)kids.push(card(h('img',{class:'art-wave',src:'img/art-wave.png',alt:''}),
+    h('h2',{style:'font-size:19px',textContent:`${N} days. You actually did it, ${S.name}.`}),
+    h('p',{textContent:`${cleanDays()} clean days, ${S.wins.length} cravings beaten. Your tolerance is reset and the worst of withdrawal is behind you. How do you feel compared to day one? Decide what’s next while your head is clear.`}),
+    h('button',{class:'wide',textContent:'Keep going: 14 more days',onclick:()=>{S.tb.days+=14;persist()}}),
+    h('button',{class:'ghost wide mt',textContent:'I’m done with it. Keep the clock running',onclick:()=>{S.tb.open=true;persist()}}),
+    h('button',{class:'link wide mt',textContent:'End the break',onclick:()=>{if(confirm('End the T-break? If you go back, the easiest rules to keep are: no tobacco in the mix, not every day, and never before evening.')){S.tb.ended=true;persist()}}})));
+  else if(S.tb.ended)kids.push(card(h('h2',{textContent:'Break finished'}),h('p',{textContent:'The clock still runs. If use creeps back up, a new break is one tap away.'}),
+    h('button',{class:'wide',textContent:'Start a new T-break',onclick:()=>{S.tb={start:Date.now(),days:S.tb.days>30?21:S.tb.days,open:false,ended:false};S.slips=S.slips.filter(()=>true);persist();toast('New break started.')}})));
+  else if(started()&&!S.tb.open)kids.push(h('div',{class:'small',style:'text-align:center;margin:-4px 0 14px',textContent:`Free on ${fmtDate(freeDate())}`}));
+
+  kids.push(h('button',{class:'sosbtn',onclick:startCrave},h('b',{style:'font-weight:500',textContent:'I want to smoke'}),h('small',{textContent:'Press this first. Give me 10 minutes.'})));
+  kids.push(h('button',{class:'link wide',style:'margin-bottom:6px',textContent:'I slipped',onclick:()=>{slip={when:'now',trigger:'',plan:'',note:''};go('slip')}}));
+
+  const sv=savedMoney();
+  kids.push(h('div',{class:'grid3',style:'margin:10px 0'},
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Clean days'}),h('b',{textContent:S.tb.open?cleanDays():`${cleanDays()}/${N}`})),
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Cravings beaten'}),h('b',{textContent:S.wins.length})),
+    h('div',{class:'stat'},h('span',{class:'small',textContent:'Saved'}),h('b',{textContent:sv!=null?S.currency+Math.round(sv).toLocaleString():'—'}))));
+
+  // evening check
+  const di=Math.floor(now/DAY);
+  if(started()&&new Date().getHours()>=20&&!S.checks[di])kids.push(card(h('h2',{textContent:'Clean today?'}),
+    h('div',{class:'grid2'},h('button',{textContent:'Yes, clean',onclick:()=>{S.checks[di]='clean';persist();toast(`Day ${day} locked in.`)}}),
+      h('button',{class:'ghost',textContent:'I slipped',onclick:()=>{slip={when:'now',trigger:'',plan:'',note:''};go('slip')}}))));
+
+  // what's happening in the body
+  if(lu){const hrs=(now-lu)/36e5,nx=MILESTONES.find(x=>x[0]>hrs),pv=MILESTONES.filter(x=>x[0]<=hrs).pop();
+    kids.push(card(h('div',{class:'label',textContent:pv?`Reached: ${pv[1]}`:'Just started'}),
+      h('p',{class:'white',style:'margin:8px 0',textContent:pv?pv[2]:'The clock is running. The first craving is the one that matters.'}),
+      nx?h('p',{class:'small',textContent:`Next: ${nx[1]}, in ${dur((nx[0]-hrs)*36e5)}.`}):null))}
+  const rs=S.reasons;if(rs.length)kids.push(h('p',{style:'text-align:center;font:400 13.5px var(--mono);margin:18px 8px',textContent:'“'+rs[Math.floor(now/36e5)%rs.length]+'”'}));
+  fill(v,kids);
+  ticker=()=>{const l=lastUse();if(l&&$('heroT'))$('heroT').textContent=dur(Date.now()-l)};
+}
+
+/* =========================================================
+   CRAVING — 10 minutes, no decisions
+   ========================================================= */
+function startCrave(){const now=Date.now();S.crave={start:now,end:now+6e5,round:1};native.craveStart(S.crave.end);breath={on:true,t0:now};screen='crave';craveTool=null;persist();scrollTo(0,0)}
+function endCrave(){S.crave=null;native.craveCancel();breath.on=false}
+function win(tool){S.wins.push({when:Date.now(),round:S.crave?S.crave.round:0,tool:tool||craveTool||''});endCrave();screen='won';persist();scrollTo(0,0)}
+function rCrave(){
+  const v=$('app'),c=S.crave;if(!c){go('home');return}
+  const top=h('div',{class:'card hero'}),mid=h('div'),bot=h('div');
+  const T=h('div',{class:'heroT',style:'font-size:60px'}),msg=h('p',{class:'white',style:'font-size:16px;min-height:48px;margin:10px 0 0'});
+  const pts=[...Array(61)].map((_,i)=>`${i*5},${100-wf(i/60)*90}`).join(' L');
+  const w=h('div');w.innerHTML=`<svg class="wave" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,100 L${pts} L300,100 Z" fill="#8FA58A22"/><path d="M${pts}" fill="none" stroke="#8FA58A" stroke-width="1.6"/><circle id="wDot" r="5" fill="#C9925E" cx="0" cy="${100-wf(0)*90}"/></svg>`;
+  top.append(h('div',{class:'label',textContent:c.round===1?'Hold on. 10 minutes.':'Round '+c.round+'. 10 more.'}),T,w,msg);
+  fill(v,top,mid,bot);
+  const plans=Object.entries(S.ifthen).filter(x=>x[1]);
+  let phase='',tick=null;
+  function setPhase(p){
+    phase=p;
+    if(p==='breathe'){const b=h('div');tBreatheBare(b);fill(mid,b);fill(bot)}
+    else if(p==='tools'){
+      const box=h('div');
+      const tools=[['game','blocks','Blocks'],['breathe','breathe','Breathe'],['thoughts','thought','Talk back'],['tape','forward','Play it forward']];
+      if(S.hasVoice||S.letter)tools.push(['voice','headphones','My message']);
+      fill(mid,
+        h('div',{class:'notice good'},h('b',{textContent:`Day ${tbDay()} of ${S.tb.days}. `}),S.reasons.length?`You said: “${S.reasons[Math.floor(c.start/1000)%S.reasons.length]}”`:'You made a deal with yourself.'),
+        plans.length?h('div',{class:'notice'},h('b',{textContent:'Your own plan: '}),plans.map(([t,p])=>`if ${t.toLowerCase()}, ${p}`).join(' · ')):null,
+        c.round>1?card(h('h2',{textContent:'Change something physical. Now.'}),h('ul',{class:'tidy'},['Walk out of the room and down the street','Cold water on your face, or a shower','Eat something proper','Ten push-ups or the stairs twice'].map(x=>h('li',{textContent:x})))):null,
+        h('div',{class:'chips',style:'margin:12px 0'},tools.map(([k,i,l])=>h('button',{class:'chip'+(craveTool===k?' on':''),onclick:()=>{craveTool=craveTool===k?null:k;setPhase('tools')}},ic(i),l))),box);
+      subTick=null;
+      if(craveTool){ticker=null;({game:tGame,breathe:tBreathe,thoughts:tThoughts,tape:tTape,voice:tVoice})[craveTool](box,true);subTick=ticker;ticker=tick}
+      fill(bot,
+        digits()?h('button',{class:'ghost wide',onclick:()=>native.whatsapp(digits(),'Craving. Can you talk for 5 minutes?')},ic('send'),`Message ${who()}`):
+          h('button',{class:'ghost wide',onclick:()=>native.dial('14446')},ic('phone'),'Call the free helpline 14446'),
+        h('button',{class:'wide mt',textContent:'It passed. I’m okay',onclick:()=>win()}));
+    }
+    else if(p==='ask'){
+      fill(mid,card(h('h2',{style:'font-size:19px',textContent:'10 minutes done. You held on.'}),h('p',{textContent:'Most cravings have dropped by now. How is it?'}),
+        h('button',{class:'wide',textContent:'It passed',onclick:()=>win()}),
+        h('button',{class:'amber wide mt',textContent:'Still strong. 10 more minutes',onclick:()=>{const n=Date.now();S.crave={start:n,end:n+6e5,round:c.round+1};native.craveStart(S.crave.end);craveTool=null;persist()}}),
+        digits()?h('button',{class:'ghost wide mt',onclick:()=>native.dial('+'+digits())},ic('phone'),`Call ${who()}`):null,
+        h('button',{class:'ghost wide mt',onclick:()=>native.dial('14446')},ic('phone'),'Call 14446 (free, 24×7)'),
+        h('button',{class:'link wide mt',textContent:'I’m going to smoke',onclick:()=>{endCrave();screen='smoke';persist()}})));
+      fill(bot);subTick=null;
+    }
+  }
+  tick=()=>{
+    const n=Date.now(),left=c.end-n,x=Math.min(1,1-left/(c.end-c.start));
+    T.textContent=mmss(left);const d=w.querySelector('#wDot');if(d){d.setAttribute('cx',x*300);d.setAttribute('cy',100-wf(x)*90)}
+    const el=n-c.start,want=left<=0?'ask':(el<6e4&&c.round===1&&!craveTool)?'breathe':'tools';
+    msg.textContent=left<=0?'':want==='breathe'?'Nothing to decide. Just breathe with the circle for one minute.':TIPS[Math.floor(el/2e4)%TIPS.length];
+    if(want!==phase)setPhase(want);
+    if(typeof subTick==='function')subTick();
+  };
+  ticker=tick;tick();
+}
+let subTick=null;
+function tBreatheBare(box){
+  const c=h('div',{class:'breath',textContent:''});box.append(c);let ph='';
+  subTick=()=>{if(!c.isConnected){return}
+    const e=(Date.now()-breath.t0)%14000;let p,lab,left;
+    if(e<4000){p='in';lab='Breathe in';left=4000-e}else if(e<8000){p='hold';lab='Hold';left=8000-e}else{p='out';lab='Breathe out';left=14000-e}
+    if(p!==ph){ph=p;if(p==='in'){c.style.transition='transform 4s ease-in-out';c.style.transform='scale(1)'}if(p==='out'){c.style.transition='transform 6s ease-in-out';c.style.transform='scale(.62)'}}
+    c.textContent=`${lab}\n${Math.ceil(left/1000)}`};
+}
+function rWon(){
+  const n=S.wins.length;
+  fill($('app'),h('div',{class:'card hero'},h('img',{class:'art-wave',src:'img/art-wave.png',alt:''}),
+    h('h2',{style:'font-size:22px',textContent:'You rode it out.'}),
+    h('p',{class:'white',style:'font-size:16px',textContent:n===1?'First craving beaten. Now you know it can be done.':`That’s ${n} cravings beaten. Each one makes the next one weaker.`}),
+    digits()?h('button',{class:'ghost wide mt',onclick:()=>native.whatsapp(digits(),`Just beat a craving. Day ${tbDay()} of ${S.tb.days}.`)},ic('send'),`Tell ${who()}`):null,
+    h('button',{class:'wide mt',textContent:'Back home',onclick:()=>go('home')})));
+}
+function rSmoke(){
+  fill($('app'),card(h('h2',{style:'font-size:19px',textContent:'Okay. Your call.'}),
+    h('p',{textContent:'You gave it a real try, and that still counts. If you’re going to, make it as small as you can:'}),
+    h('ul',{class:'tidy white'},['No tobacco in it','The smallest amount you can','One, then put everything away again'].map(x=>h('li',{textContent:x}))),
+    h('p',{textContent:'Then come back and tap "I slipped". A slip doesn’t end the break. Disappearing does.'}),
+    h('button',{class:'wide mt',textContent:'Actually, give me 10 more minutes',onclick:startCrave}),
+    h('button',{class:'ghost wide mt',textContent:'Log the slip now',onclick:()=>{slip={when:'now',trigger:'',plan:'',note:''};go('slip')}}),
+    h('button',{class:'link wide mt',textContent:'Back home',onclick:()=>go('home')})));
+}
+
+/* =========================================================
+   SLIP — log it, learn one thing, keep going
+   ========================================================= */
+function rSlip(){
+  const v=$('app');if(!slip)slip={when:'now',trigger:'',plan:'',note:''};
+  const plan=h('input',{value:slip.plan,maxLength:120,placeholder:'e.g. leave the room and call '+who(),oninput:e=>slip.plan=e.target.value});
+  fill(v,card(h('h2',{style:'font-size:19px',textContent:'It happened. That’s a slip, not the end.'}),
+    h('p',{textContent:'Almost everyone slips. The people who make it are the ones who log it and carry on the same day.'}),
+    h('label',{textContent:'When?'}),
+    h('div',{class:'chips'},[['now','Just now'],['earlier','Earlier today'],['yesterday','Yesterday']].map(([k,l])=>h('button',{class:'chip'+(slip.when===k?' on':''),textContent:l,onclick:()=>{slip.when=k;render()}}))),
+    h('label',{textContent:'What set it off?'}),
+    h('div',{class:'chips'},TRIGGERS.map(t=>h('button',{class:'chip'+(slip.trigger===t?' on':''),textContent:t,onclick:()=>{slip.trigger=t;slip.plan=slip.plan||S.ifthen[t]||'';render()}}))),
+    h('label',{textContent:slip.trigger?`Next time "${slip.trigger.toLowerCase()}" hits, I will…`:'Next time, I will…'}),plan,
+    h('button',{class:'wide',style:'margin-top:18px',textContent:'Log it and keep going',onclick:()=>{
+      const now=Date.now(),when=slip.when==='now'?now:slip.when==='earlier'?now-3*36e5:now-20*36e5;
+      S.slips.push({when,trigger:slip.trigger});S.lastUse=Math.max(S.lastUse,when);S.checks[Math.floor(when/DAY)]='slip';
+      if(slip.trigger&&slip.plan.trim())S.ifthen[slip.trigger]=slip.plan.trim();
+      endCrave();screen='slipped';persist();scrollTo(0,0)}})));
+}
+function rSlipped(){
+  const d=tbDay(),N=S.tb.days;
+  fill($('app'),card(h('h2',{style:'font-size:19px',textContent:'Logged. The break is still on.'}),
+    h('p',{class:'white',textContent:started()&&!S.tb.ended?`The clean clock restarted, but you’re still on day ${d}${S.tb.open?'':' of '+N}, with ${cleanDays()} clean days behind you. Those don’t disappear.`:'The clean clock has restarted.'}),
+    h('p',{textContent:'Put everything away again now, drink some water, and do the next hour clean. That’s the whole job.'}),
+    digits()?h('button',{class:'ghost wide mt',onclick:()=>native.whatsapp(digits(),`I slipped today. Getting straight back on it. Day ${d} of ${N}.`)},ic('send'),`Tell ${who()} (it helps)`):null,
+    h('button',{class:'wide mt',textContent:'Back home',onclick:()=>go('home')})));
+}
+
+/* =========================================================
+   MORE — tools and settings, out of the way
+   ========================================================= */
+const TOOLS=[['breathe','breathe','Breathe',tBreathe],['game','blocks','Blocks',tGame],['thoughts','thought','Talk back',tThoughts],['tape','forward','Play it forward',tTape],
+  ['voice','headphones','Message from me',tVoice],['body','heart','Body recovery',tBody],['sleep','moon','Sleep without it',tSleep],['nic','notob','Nicotine help',tNic]];
+function weeklyText(){const d=tbDay(),N=S.tb.days;
+  return `ClearMind update from ${S.name}: day ${Math.min(d,S.tb.open?d:N)}${S.tb.open?'':' of '+N}. Clean days: ${cleanDays()}. Cravings beaten: ${S.wins.length}. Slips: ${S.slips.filter(x=>x.when>=S.tb.start).length}. Clean right now for ${lastUse()?dur(Date.now()-lastUse()):'—'}.`}
+function rMore(){
+  const v=$('app');
+  if(sub){const t=TOOLS.find(x=>x[0]===sub);if(t){const b=h('div');fill(v,b);t[3](b,false);return}}
+  if(sub==='weekly'){fill(v,card(h('h2',{textContent:`Weekly update for ${who()}`}),h('p',{class:'white',style:'font-family:var(--mono);font-size:14px',textContent:weeklyText()}),
+    digits()?h('button',{class:'wide mt',onclick:()=>native.whatsapp(digits(),weeklyText())},ic('send'),'Send on WhatsApp'):h('p',{textContent:'Add your person’s number under My deal first.'}),
+    h('button',{class:'ghost wide mt',textContent:'Share another way',onclick:()=>native.share(weeklyText())})));return}
+  if(sub==='deal'){rDeal(v);return}
+  if(sub==='history'){
+    const rows=[...S.slips.map((x,i)=>({t:x.when,k:'slip',i,txt:'Slip'+(x.trigger?' · '+x.trigger:'')})),...S.wins.map((x,i)=>({t:x.when,k:'win',i,txt:'Craving beaten'+(x.round>1?' · round '+x.round:'')}))].sort((a,b)=>b.t-a.t).slice(0,120);
+    fill(v,card(h('h2',{textContent:'History'}),rows.length?rows.map(r=>h('div',{class:'entry'},h('div',{},h('div',{style:r.k==='slip'?'color:var(--emberInk)':'',textContent:r.txt}),h('div',{class:'small',textContent:new Date(r.t).toLocaleString([], {weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})})),
+      r.k==='slip'?h('button',{class:'ghost sm',textContent:'Delete',onclick:()=>{if(confirm('Delete this slip?')){S.slips.splice(r.i,1);S.lastUse=Math.max(0,...S.slips.map(s=>s.when))||S.lastUse;persist()}}}):null)):h('p',{textContent:'Nothing yet.'})));return}
+  if(sub==='help'){const tel=(n,d,num)=>h('div',{class:'tel'},h('div',{},h('div',{textContent:n}),h('div',{class:'small',textContent:d})),h('button',{class:'ghost sm',onclick:()=>native.dial(num)},ic('phone'),num));
+    fill(v,card(h('h2',{textContent:'Free help (India)'}),tel('Drug de-addiction helpline','Counselling and referral · 24×7','14446'),tel('Tobacco Quit Line','Free counselling to quit tobacco','1800112356'),tel('Tele-MANAS','Mental health support · 24×7','14416'),
+      h('p',{class:'small mt',textContent:'An app is support, not treatment. If withdrawal is rough, or your mood drops badly, a doctor can help a lot, and it’s confidential. Many government hospitals run de-addiction clinics.'})));return}
+  if(sub==='backup'){const ta=h('textarea',{rows:4,placeholder:'Paste a backup here to restore'});
+    fill(v,card(h('h2',{textContent:'Backup'}),h('p',{textContent:'Everything lives only on this phone. Export sends a copy wherever you choose (your own WhatsApp, Drive, email).'}),
+      h('button',{class:'wide',textContent:'Export backup',onclick:()=>native.share(JSON.stringify({app:'ClearMind',v:4,data:S}))}),h('div',{style:'height:14px'}),ta,
+      h('button',{class:'ghost wide mt',textContent:'Restore from pasted backup',onclick:()=>{try{const d=JSON.parse(ta.value);if(!d||d.app!=='ClearMind'||!d.data)throw 0;if(!confirm('Replace everything on this phone with the backup?'))return;localStorage.setItem(KEY,JSON.stringify({...d.data,hasVoice:false}));load();go('home');toast('Restored.')}catch(e){toast('That isn’t a ClearMind backup.')}}})),
+     card(h('h2',{textContent:'Start over'}),h('button',{class:'danger',textContent:'Erase everything',onclick:async()=>{if(confirm('Erase all ClearMind data on this phone?')&&confirm('Really erase everything?')){try{await blobSet('voice',null)}catch(e){}localStorage.removeItem(KEY);load();ob={step:0};save();render()}}})));return}
+  const row=(i,l,d,fn)=>h('button',{class:'tool',style:'min-height:0;flex-direction:row;align-items:center;gap:12px;width:100%;margin:8px 0',onclick:fn},h('span',{style:'margin:0'},ic(i)),h('div',{},l,h('small',{style:'display:block',textContent:d})));
+  fill(v,card(h('div',{class:'label',textContent:'Tools'}),h('div',{class:'tools mt'},TOOLS.map(([k,i,l])=>h('button',{class:'tool',style:'min-height:84px',onclick:()=>go('more',{sub:k})},h('span',{},ic(i)),l)))),
+    row('send','Weekly update',`Send ${who()} your progress`,()=>go('more',{sub:'weekly'})),
+    row('target','My deal','Length, reasons, risky times, your person',()=>go('more',{sub:'deal'})),
+    row('calendar','History','Slips and cravings beaten',()=>go('more',{sub:'history'})),
+    row('phone','Free helplines','Talk to a real person',()=>go('more',{sub:'help'})),
+    row('jar','Backup','Export, restore, start over',()=>go('more',{sub:'backup'})),
+    h('footer',{textContent:'ClearMind keeps everything on this phone. Nothing is sent anywhere unless you tap a send button.'}));
+}
+function rDeal(v){
+  const d=clone({days:S.tb.days,reasons:S.reasons,risk:S.risk,person:S.person,spend:S.spend,theme:S.theme,name:S.name});
+  const draw=()=>fill(v,card(h('h2',{textContent:'My deal'}),
+    h('label',{textContent:'My name'}),h('input',{value:d.name,maxLength:30,oninput:e=>d.name=e.target.value.trim()}),
+    h('label',{textContent:'T-break length (days)'}),h('input',{type:'number',inputMode:'numeric',min:1,max:365,value:d.days,oninput:e=>d.days=Math.min(365,Math.max(1,parseInt(e.target.value)||d.days))}),
+    h('label',{textContent:'Why I’m doing this (one per line)'}),h('textarea',{rows:3,value:d.reasons.join('\n'),oninput:e=>d.reasons=e.target.value.split('\n').map(x=>x.trim()).filter(Boolean)}),
+    h('label',{textContent:'Risky times (I’ll get a heads-up before each)'}),
+    h('div',{class:'chips'},RISK_SLOTS.map(([t,l])=>h('button',{class:'chip'+(d.risk.includes(t)?' on':''),textContent:`${l} · ${t}`,onclick:()=>{d.risk=d.risk.includes(t)?d.risk.filter(x=>x!==t):[...d.risk,t].sort();draw()}}))),
+    h('label',{textContent:'My person'}),h('input',{value:d.person.name,maxLength:30,placeholder:'Name',oninput:e=>d.person.name=e.target.value.trim()}),
+    h('div',{style:'height:8px'}),h('input',{type:'tel',value:d.person.phone,maxLength:20,placeholder:'WhatsApp number',oninput:e=>d.person.phone=e.target.value.trim()}),
+    h('label',{class:'check',style:'margin-top:12px'},h('input',{type:'checkbox',checked:d.person.updates,onchange:e=>d.person.updates=e.target.checked}),'Sunday reminder to send them an update'),
+    h('label',{textContent:'Spend per day before the break'}),h('input',{type:'number',inputMode:'numeric',min:0,value:d.spend||'',oninput:e=>d.spend=Math.max(0,parseFloat(e.target.value)||0)}),
+    h('label',{textContent:'Look'}),h('div',{class:'chips'},[['dark','Night'],['light','Day']].map(([k,l])=>h('button',{class:'chip'+(d.theme===k?' on':''),textContent:l,onclick:()=>{d.theme=k;draw()}}))),
+    h('button',{class:'wide',style:'margin-top:18px',textContent:'Save',onclick:()=>{S.name=d.name||S.name;S.tb.days=d.days;S.reasons=d.reasons;S.risk=d.risk;S.person=d.person;S.spend=d.spend;S.theme=d.theme;native.askNotify();persist();toast('Saved.')}}),
+    h('button',{class:'link wide mt',textContent:'Turn on notifications',onclick:()=>native.askNotify()})));
+  draw();
+}
+function tNic(box){
+  box.append(card(h('h2',{textContent:'Nicotine help'}),
+    h('p',{textContent:'If you’ve been mixing tobacco, part of every craving is nicotine. It wears off fast, which is why the urge keeps coming back even when you’re already high.'}),
+    h('ul',{class:'tidy'},['Nicotine gum or patches from a chemist take the edge off. Ask the pharmacist which strength fits how much you smoked.','Nicotine cravings are worst in the first 3 days and fade over 2 to 4 weeks.','Each one lasts only a few minutes. Gum, water, or a walk gets you through most of them.','Avoid chai or coffee in your usual smoking spot for the first week; the pairing is a strong trigger.'].map(x=>h('li',{textContent:x}))),
+    h('button',{class:'ghost wide mt',onclick:()=>native.dial('1800112356')},ic('phone'),'Free Tobacco Quit Line 1800-11-2356')));
+}
+
+/* ---------- events from Android (notification taps and actions) ---------- */
+function handleNative(){
+  const ev=native.pull();if(!ev.length)return;let dest=null;
+  for(const e of ev){
+    if(e.type==='clean'){S.checks[Math.floor((e.at||Date.now())/DAY)]='clean'}
+    if(e.type==='open')dest=e.value;
+  }
+  save();
+  if(!S.onboarded){render();return}
+  if(dest==='crave'){if(S.crave){screen='crave';render()}else startCrave()}
+  else if(dest==='slip'){slip={when:'now',trigger:'',plan:'',note:''};go('slip')}
+  else if(dest==='weekly')go('more',{sub:'weekly'})
+  else render();
+}
+window.onNative=handleNative;
+
+/* ---------- clock ---------- */
+setInterval(()=>{if(ticker)try{ticker()}catch(e){}else if(subTick)try{subTick()}catch(e){}},500);
+setInterval(()=>{if(screen==='home')render()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){handleNative();if(screen==='home'||screen==='crave')render()}});
+load();save();render();handleNative();
+
+</script>
+</body>
+</html>
