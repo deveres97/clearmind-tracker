@@ -33,8 +33,11 @@ object Scheduler {
         val i = Intent(c, AlarmReceiver::class.java).apply {
             putExtra(KIND, kind)
             putExtra("extra", extra)
-            // Make each alarm's intent distinct so they don't overwrite each other.
-            data = android.net.Uri.parse("clearmind://$kind/$rc/$extra")
+            // Identity is kind + request code only — never the extra. Two PendingIntents
+            // match when their intents are equal, and extras are ignored in that test
+            // while data is not. Keeping the time out of the URI means a risky-hour
+            // alarm can still be cancelled after the user changes that time.
+            data = android.net.Uri.parse("clearmind://$kind/$rc")
         }
         return PendingIntent.getBroadcast(c, rc, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
@@ -100,7 +103,9 @@ object Scheduler {
         a.cancel(pi(c, KIND_EVENING, RC_EVENING))
         a.cancel(pi(c, KIND_WEEKLY, RC_WEEKLY))
         a.cancel(pi(c, KIND_CLOCK, RC_CLOCK))
-        for (i in 0 until 12) a.cancel(pi(c, KIND_RISK, RC_RISK_BASE + i, ""))
+        // Cancel generously: more slots than the UI can ever offer, so times the
+        // user has since removed cannot keep firing.
+        for (i in 0 until 24) a.cancel(pi(c, KIND_RISK, RC_RISK_BASE + i))
     }
 
     fun craveStart(c: Context, endAt: Long) {
@@ -118,9 +123,11 @@ object Scheduler {
         when (kind) {
             KIND_RISK -> {
                 val idx = Store.risk(c).indexOf(extra)
-                if (idx >= 0) {
-                    val parts = extra.split(":")
-                    var total = (parts[0].toInt() * 60 + parts[1].toInt()) - 10
+                val parts = extra.split(":")
+                val hh = parts.getOrNull(0)?.toIntOrNull()
+                val mm = parts.getOrNull(1)?.toIntOrNull()
+                if (idx >= 0 && hh != null && mm != null) {
+                    var total = hh * 60 + mm - 10
                     if (total < 0) total += 24 * 60
                     set(c, nextAt(total / 60, total % 60), pi(c, KIND_RISK, RC_RISK_BASE + idx, extra))
                 }

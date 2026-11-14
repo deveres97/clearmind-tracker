@@ -1,8 +1,10 @@
 // ClearMind service worker v3
 // App page: network-first, so updates you push to GitHub reach your phone.
 // Fonts (Google Fonts): cached on first load so the app looks right offline.
-const CACHE = "clearmind-v3";
-const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
+const CACHE = "clearmind-v5";
+const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg",
+  "./img/icon-192.png", "./img/icon-512.png", "./img/icon-maskable-512.png", "./img/apple-touch-icon.png",
+  "./img/art-calm.png", "./img/art-wave.png", "./img/badge-tbreak.png"];
 const FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
 
 self.addEventListener("install", event => {
